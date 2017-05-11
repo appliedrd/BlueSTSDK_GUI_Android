@@ -176,16 +176,20 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     private boolean mKeepConnectionOpen;
     private boolean mShowKeepConnectionOpenNotification = false;
     private Node mNode;
-    private boolean mResetChaceOnConnection;
+    private boolean mResetCacheOnConnection;
 
     /**
      * true if we are showing the debug console
      */
     private boolean mShowDebugConsole = false;
 
-    private Node.NodeStateListener mUpdateMenuOnConnection = new Node.NodeStateListener() {
+    /**
+     * this listener will automatically remove itself after the first connection
+     */
+    private Node.NodeStateListener mUpdateMenuWhenConnect = new Node.NodeStateListener() {
         @Override
         public void onStateChange(Node node, Node.State newState, Node.State prevState) {
+            node.removeNodeStateListener(this);
             if(newState==Node.State.Connected){
                 DemosActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -234,7 +238,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         if (savedInstanceState == null) {
             Intent i = getIntent();
             mNode = Manager.getSharedInstance().getNodeWithTag(i.getStringExtra(NODE_TAG_ARG));
-            mResetChaceOnConnection = i.getBooleanExtra(RESET_CACHE_ARG,false);
+            mResetCacheOnConnection = i.getBooleanExtra(RESET_CACHE_ARG,false);
             mShowDebugConsole = i.getBooleanExtra(DEBUG_CONSOLE, false);
         } else {
             mNode = Manager.getSharedInstance().getNodeWithTag(savedInstanceState.getString(NODE_TAG_ARG));
@@ -289,10 +293,11 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     private void buildDemoAdapter(Node node){
         if(mPager.getAdapter()!=null) // it is already initialized
             return;
+
         mPager.addOnPageChangeListener(mUpdateActivityTitle);
         final DemosTabAdapter adapter=new DemosTabAdapter(node,getAllDemos(), getFragmentManager());
         mPager.setAdapter(adapter);
-        mUpdateActivityTitle.onPageSelected(0);
+        mUpdateActivityTitle.onPageSelected(mPager.getCurrentItem());
         int nDemo = adapter.getCount();
         Menu navigationMenu = mNavigationTab.getMenu();
         //remove the old items
@@ -313,7 +318,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         }
 
         if(!node.isConnected()){
-            node.addNodeStateListener(mUpdateMenuOnConnection);
+            node.addNodeStateListener(mUpdateMenuWhenConnect);
         }
     }
 
@@ -335,8 +340,10 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         }
         keepConnectionOpen(true,true);
         NodeConnectionService.removeDisconnectNotification(this);
-        mConnectionProgressDialog = new ConnectProgressDialog(this,mNode.getName());
+        mConnectionProgressDialog.setNodeName(mNode.getName());
+        mConnectionProgressDialog.setState(mNode.getState());
         mNode.addNodeStateListener(mConnectionProgressDialog);
+
         if(!mNode.isConnected()){
             mNode.addNodeStateListener(new Node.NodeStateListener() {
                 @Override
@@ -355,7 +362,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
                     }//if
                 }
             });
-            NodeConnectionService.connect(this,mNode,mResetChaceOnConnection);
+            NodeConnectionService.connect(this,mNode, mResetCacheOnConnection);
         }else{
             buildDemoAdapter(mNode);
             showConsoleOutput(mShowDebugConsole);
@@ -364,23 +371,21 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
     @Override
     protected void onPause() {
-        mPager.removeOnPageChangeListener(mUpdateActivityTitle);
-        if (mShowDebugConsole) {
-            if(mNode!=null) {
+        if(mNode!=null) {
+            mNode.removeNodeStateListener(mConnectionProgressDialog);
+            if (mShowDebugConsole) {
                 Debug debug = mNode.getDebug();
                 //remove the listener
                 if (debug != null)
                     debug.removeDebugOutputListener(mDebugListener);
-            }
-        }//if
+            }//if
+        }//if !=null
         super.onPause();
     }
 
     @Override
     protected void onStop(){
         if(mNode!=null){
-            mNode.removeNodeStateListener(mUpdateMenuOnConnection);
-            mNode.removeNodeStateListener(mConnectionProgressDialog);
             if(!mKeepConnectionOpen){
                 NodeConnectionService.disconnect(this,mNode);
             }else if(mShowKeepConnectionOpenNotification){
