@@ -36,20 +36,36 @@
  */
 package com.st.BlueSTSDK.gui;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.widget.TextView;
+
+import java.net.URL;
 
 /**
  * Main activity, it will show the ST logo and a button for the about page and one for start the ble
  * scanning
  */
 public abstract class MainActivity extends AppCompatActivity {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     /**
      * The number of milliseconds to wait after
@@ -58,6 +74,10 @@ public abstract class MainActivity extends AppCompatActivity {
     private static final int AUTO_HIDE_DELAY_MILLIS = 1000;
     private static final String SPLASH_SCREEN_WAS_SHOWN = MainActivity.class.getCanonicalName()+"" +
             ".SplashWasShown";
+    private static final String PRIVACY_DIALOG_SHOWN = MainActivity.class.getCanonicalName()+".PRIVACY_DIALOG_SHOWN";
+    private static final String PRIVACY_DIALOG_SHOWN_TAG = MainActivity.class.getCanonicalName()+".PRIVACY_DIALOG_SHOWN";
+
+
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -169,4 +189,88 @@ public abstract class MainActivity extends AppCompatActivity {
      * @param view view pressed
      */
     public abstract void startAboutActivity(View view);
+
+    /**
+     * tell witch file is containing the privacy policy, the file content will be shown in the dialog
+     * @return raw resource id with the privacy policy
+     */
+    public abstract URL getPrivacyPolicyUrl();
+
+
+    private static void setDialogShown(final SharedPreferences prefs, boolean showNextTime){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(PRIVACY_DIALOG_SHOWN, showNextTime);
+        editor.apply();
+    }
+
+    private boolean showPrivacyDialog(){
+        final SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
+        return !prefs.contains(PRIVACY_DIALOG_SHOWN) && getPrivacyPolicyUrl()!=null;
+    }
+
+    private void displayPrivacyDialog(){
+        URL page = getPrivacyPolicyUrl();
+        if(page!=null)
+            PrivacyDialog.newInstance(page).show(getFragmentManager(),PRIVACY_DIALOG_SHOWN_TAG);
+
+    }
+
+    private boolean privacyDialogIsCurrentlyDisplayed(){
+        return getFragmentManager().findFragmentByTag(PRIVACY_DIALOG_SHOWN_TAG)!=null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(showPrivacyDialog() && !privacyDialogIsCurrentlyDisplayed()) {
+            displayPrivacyDialog();
+        }
+    }
+
+    public static class PrivacyDialog extends DialogFragment {
+
+        private static final String PRIVACY_URL_EXTRA = PrivacyDialog.class.getCanonicalName()+".PRIVACY_URL_EXTRA";
+
+        public static DialogFragment newInstance(@NonNull URL privacyPage){
+            Bundle param = new Bundle();
+            param.putSerializable(PRIVACY_URL_EXTRA,privacyPage);
+
+            DialogFragment dialog = new PrivacyDialog();
+            dialog.setArguments(param);
+            return dialog;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final String urlPage = getArguments().getSerializable(PRIVACY_URL_EXTRA).toString();
+
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+            final SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+            dialogBuilder.setTitle(R.string.privacyDialog_title);
+            dialogBuilder.setMessage(R.string.privacyDialog_message);
+            dialogBuilder.setPositiveButton(R.string.privacyDialog_button, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent openUrl = new Intent(Intent.ACTION_VIEW);
+                    openUrl.setData(Uri.parse(urlPage));
+                    startActivity(openUrl);
+                    setDialogShown(prefs,false);
+                }
+            });
+            dialogBuilder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    setDialogShown(prefs,false);
+                }
+            });
+            dialogBuilder.setCancelable(false);
+
+            return dialogBuilder.create();
+
+        }
+    }
+
+
 }

@@ -34,23 +34,25 @@
   ~ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
   ~ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   ~ OF SUCH DAMAGE.
-  -->
-
-<manifest package="com.st.BlueSTSDK.gui"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.st.BlueSTSDK.gui">
 
     <!-- needed for read the fw file -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".DebugConsoleActivity"
             android:label="@string/title_activity_debug_console"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SettingsActivityWithNode"
             android:label="@string/title_activity_settings"
@@ -59,17 +61,40 @@
 
         <activity
             android:name=".fwUpgrade.FwUpgradeActivity"
-            android:label="@string/title_activity_fw_upgrade">
-        </activity>
+            android:label="@string/title_activity_fw_upgrade" />
 
         <service
             android:name=".fwUpgrade.FwUpgradeService"
-            android:exported="false">
-        </service>
-            <service
-                android:name=".NodeConnectionService"
-                android:exported="false"
-                android:enabled="true" />
+            android:exported="false" />
+        <service
+            android:name=".NodeConnectionService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".privacyPolicy.PrivacyPolicyActivity"
+            android:label="@string/title_activity_privacy_policy"
+            android:parentActivityName=".AboutActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.st.BlueSTSDK.gui.AboutActivity" />
+        </activity>
+        <activity
+            android:name=".thirdPartyLibLicense.LibLicenseActivity"
+            android:label="License"
+            android:launchMode="singleTop"
+            android:parentActivityName=".AboutActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.st.BlueSTSDK.gui.AboutActivity" />
+        </activity>
+        <activity android:name=".thirdPartyLibLicense.LibLicenseDetailsActivity"
+            android:label="Details"
+            android:parentActivityName=".thirdPartyLibLicense.LibLicenseActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.st.BlueSTSDK.gui.thirdPartyLibLicense.LibLicenseActivity" />
+        </activity>
     </application>
 
 </manifest>

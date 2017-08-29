@@ -58,7 +58,6 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
 .OnNodeSelectedListener, NodeRecyclerViewAdapter.FilterNode, View.OnClickListener{
     private final static String TAG = NodeListActivity.class.getCanonicalName();
 
-
     private Manager.ManagerListener mUpdateDiscoverGui = new Manager.ManagerListener() {
 
         /**
@@ -208,7 +207,7 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
         resetNodeList();
         startNodeDiscovery();
         super.onStart();
-    }//onStart
+    }//onListViewIsDisplayed
 
     /**
      * stop the discovery and remove all the lister that we attach to the manager
