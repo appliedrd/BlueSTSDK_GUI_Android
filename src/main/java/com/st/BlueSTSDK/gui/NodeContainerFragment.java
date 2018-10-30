@@ -48,6 +48,7 @@ import android.widget.Toast;
 
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;
+import com.st.BlueSTSDK.Utils.ConnectionOption;
 
 /**
  * this is headless fragment that is used for store a connected node. this fragment will not be
@@ -56,7 +57,7 @@ import com.st.BlueSTSDK.Node;
  *
  * this class will start the connection with the node inside the onCreate and close it inside the
  * onDestroy.
- * If you move in nother activity that will use the same node you can avoid to disconnect calling
+ * If you move to another activity that will use the same node you can avoid to disconnect calling
  * the method {@link NodeContainerFragment#keepConnectionOpen(boolean, boolean)}
  */
 @Deprecated
@@ -160,7 +161,9 @@ public class NodeContainerFragment extends Fragment implements NodeContainer {
                             mConnectionWait.show(); //show the dialog and set the listener for hide it
                         Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
 
-                        mNode.connect(getActivity(), mResetNodeCache);
+                        mNode.connect(getActivity(), ConnectionOption.builder()
+                                .resetCache(mResetNodeCache)
+                                .build());
                     }
                 });
             }

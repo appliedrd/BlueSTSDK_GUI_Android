@@ -43,6 +43,8 @@ import android.support.test.rule.ActivityTestRule;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.st.BlueSTSDK.gui.R;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +59,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 
-import com.st.BlueSTSDK.gui.test.R;
 
 @RunWith(AndroidJUnit4.class)
 public class ThirdPartyLibLicenseTest {

@@ -44,10 +44,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;
-import com.st.BlueSTSDK.gui.util.ConnectProgressDialog;
+import com.st.BlueSTSDK.Utils.ConnectionOption;
+import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusController;
+import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusView;
 
 /**
  * Activity that contains a Node. It will automatically display a dialog during the node connection
@@ -61,12 +64,20 @@ public class ActivityWithNode extends AppCompatActivity implements NodeContainer
     private final static String KEEP_CONNECTION_OPEN = ActivityWithNode.class.getCanonicalName() +
             ".KEEP_CONNECTION_OPEN";
 
-    private boolean mKeepConnectionOpen;
-    private boolean mShowKeepConnectionOpenNotification;
+    private final static String CONNECTION_OPTIONS = ActivityWithNode.class.getCanonicalName() + "" +
+            ".CONNECTION_OPTIONS";
 
-    private ConnectProgressDialog mConnectionProgressDialog;
+
+    private boolean mKeepConnectionOpen;
 
     protected Node mNode;
+    private ConnectionOption mConnecitonOption;
+    private ConnectionStatusView mConnectionStatusView;
+
+    protected static Intent getStartIntent(Context c, @NonNull Class activity, @NonNull Node
+            node,boolean keepConnectionOpen){
+        return getStartIntent(c,activity,node,keepConnectionOpen,null);
+    }
 
     /**
      * create an intent for start the activity that will log the information from the node
@@ -77,11 +88,20 @@ public class ActivityWithNode extends AppCompatActivity implements NodeContainer
      * @return intent for start this activity
      */
     protected static Intent getStartIntent(Context c, @NonNull Class activity, @NonNull Node
-            node,boolean keepConnectionOpen) {
+            node,boolean keepConnectionOpen,@Nullable ConnectionOption option) {
         Intent i = new Intent(c, activity);
         i.putExtra(NODE_TAG, node.getTag());
         i.putExtra(KEEP_CONNECTION_OPEN, keepConnectionOpen);
+        if(option!=null)
+            i.putExtra(CONNECTION_OPTIONS,option);
         return i;
+    }
+
+
+    private void addConnectionProgressView(){
+        ViewGroup rootView = findViewById(android.R.id.content);
+        mConnectionStatusView = new ConnectionStatusView(this);
+        rootView.addView(mConnectionStatusView);
     }
 
     @Override
@@ -94,9 +114,15 @@ public class ActivityWithNode extends AppCompatActivity implements NodeContainer
         String nodeTag = i.getStringExtra(NODE_TAG);
         mNode = Manager.getSharedInstance().getNodeWithTag(nodeTag);
         mKeepConnectionOpen = i.getBooleanExtra(KEEP_CONNECTION_OPEN,false);
-        mConnectionProgressDialog = new ConnectProgressDialog(this,"");
+        mConnecitonOption = i.getParcelableExtra(CONNECTION_OPTIONS);
 
     }//onCreate
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        addConnectionProgressView();
+    }
 
     /**
      * if we have to leave this activity, we force to keep the connection open, since we go back
@@ -118,21 +144,13 @@ public class ActivityWithNode extends AppCompatActivity implements NodeContainer
             return;
         }
         keepConnectionOpen(true,true);
-        mConnectionProgressDialog.setNodeName(mNode.getName());
-        mConnectionProgressDialog.setState(mNode.getState());
-        mNode.addNodeStateListener(mConnectionProgressDialog);
-        NodeConnectionService.removeDisconnectNotification(this);
-        if(!mNode.isConnected()){
-            NodeConnectionService.connect(this,mNode);
-        }
-    }
 
-    @Override
-    protected void onPause() {
-        if(mNode!=null) {
-            mNode.removeNodeStateListener(mConnectionProgressDialog);
+        ConnectionStatusController mConnectionStatusController = new ConnectionStatusController(mConnectionStatusView, mNode);
+        getLifecycle().addObserver(mConnectionStatusController);
+
+        if(!mNode.isConnected()){
+            NodeConnectionService.connect(this,mNode,mConnecitonOption);
         }
-        super.onPause();
     }
 
     @Override
@@ -143,8 +161,6 @@ public class ActivityWithNode extends AppCompatActivity implements NodeContainer
 
         if(!mKeepConnectionOpen){
             NodeConnectionService.disconnect(this,mNode);
-        }else if(mShowKeepConnectionOpenNotification){
-            NodeConnectionService.displayDisconnectNotification(this,mNode);
         }
     }
 
@@ -178,7 +194,6 @@ public class ActivityWithNode extends AppCompatActivity implements NodeContainer
     @Override
     public void keepConnectionOpen(boolean keepOpen,boolean showNotificaiton){
         mKeepConnectionOpen=keepOpen;
-        mShowKeepConnectionOpenNotification =keepOpen && showNotificaiton;
     }
 
 }

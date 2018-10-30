@@ -37,12 +37,14 @@
 package com.st.BlueSTSDK.gui.fwUpgrade;
 
 import android.app.IntentService;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -108,22 +110,31 @@ public class FwUpgradeService extends IntentService implements FwUpgradeConsole.
      */
     private static final int NOTIFICATION_ID = FwUpgradeService.class.hashCode();
 
+    private static final String CONNECTION_NOTIFICATION_CHANNEL =
+            FwUpgradeService.class.getCanonicalName()+"FwUpgradeNotification";
     /**
      * action used in the intent for create this service
      */
     private static final String UPLOAD_FW =
             FwUpgradeService.class.getCanonicalName() + "action.uploadFw";
     /**
-     * key used in the intent for create this service, for store the file to upload
+     * key used in the intent for create this service, to store the file to upload
      */
     private static final String FW_FILE_URI =
             FwUpgradeService.class.getCanonicalName() + "extra.fwUri";
 
     /**
-     * key used in the intent for create this service, for store the node where upload the file
+     * key used in the intent for create this service, to store the node where upload the file
      */
     private static final String NODE_TAG =
             FwUpgradeService.class.getCanonicalName() + "extra.nodeTag";
+
+    /**
+     * key used in the intent for create this service, to store the node where upload the file
+     */
+    private static final String FW_ADDRESS_DESTINATION =
+            FwUpgradeService.class.getCanonicalName() + "extra.fwDestinationAddresss";
+
 
     /**
      * object used for send the broadcast message
@@ -178,11 +189,14 @@ public class FwUpgradeService extends IntentService implements FwUpgradeConsole.
      * @param node node where upload the file
      * @param fwFile file to upload
      */
-    public static void startUploadService(Context context, Node node, Uri fwFile) {
+    public static void startUploadService(Context context, Node node, Uri fwFile, Long address) {
         Intent intent = new Intent(context, FwUpgradeService.class);
         intent.setAction(UPLOAD_FW);
         intent.putExtra(FW_FILE_URI, fwFile);
         intent.putExtra(NODE_TAG, node.getTag());
+        if(address!=null){
+            intent.putExtra(FW_ADDRESS_DESTINATION,address);
+        }
         context.startService(intent);
     }
 
@@ -224,11 +238,33 @@ public class FwUpgradeService extends IntentService implements FwUpgradeConsole.
     }
 
     /**
+     * Create a notification channel to use for the fw upgrade
+     * @param manager manager where create the notification channel
+     * @return id for the notification channel
+     */
+    public static String createNotificationChannel(Context ctx,NotificationManager manager){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            String desc = ctx.getString(R.string.fwUpgrade_channelName);
+            String name = ctx.getString(R.string.fwUpgrade_channelDesc);
+            NotificationChannel channel = new NotificationChannel(CONNECTION_NOTIFICATION_CHANNEL,
+                    name, NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(desc);
+            manager.createNotificationChannel(channel);
+        }
+
+        return CONNECTION_NOTIFICATION_CHANNEL;
+    }
+
+    /**
      * crate the notification for display the upload status
      * @return object that will build the notification
+     * @param notificationManager
      */
-    private NotificationCompat.Builder buildUploadNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+    private NotificationCompat.Builder buildUploadNotification(NotificationManager notificationManager) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+                createNotificationChannel(this,notificationManager))
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
 
                 .setContentTitle(getString(R.string.fwUpgrade_notificationTitle));
@@ -273,6 +309,13 @@ public class FwUpgradeService extends IntentService implements FwUpgradeConsole.
                 getFwUpgradeStatusIntent(mFileLength - remainingBytes, mFileLength));
     }
 
+    private static @Nullable Long extractAddress(Intent intent){
+        if(intent.hasExtra(FW_ADDRESS_DESTINATION))
+            return intent.getLongExtra(FW_ADDRESS_DESTINATION,0);
+        else
+            return null;
+    }
+
     /**
      * check that the intent is correct and start the service
      * @param intent inent for start the service
@@ -284,7 +327,8 @@ public class FwUpgradeService extends IntentService implements FwUpgradeConsole.
             if (UPLOAD_FW.equals(action)) {
                 final Uri file = intent.getParcelableExtra(FW_FILE_URI);
                 final Node node = getNode(intent.getStringExtra(NODE_TAG));
-                handleActionUpload(file, node);
+                final Long address = extractAddress(intent);
+                handleActionUpload(file, node,address);
             }
         }
     }
@@ -303,25 +347,24 @@ public class FwUpgradeService extends IntentService implements FwUpgradeConsole.
      * @param file file to upload
      * @param node node where upload the file
      */
-    void handleActionUpload(Uri file, Node node) {
+    void handleActionUpload(Uri file, Node node,Long address) {
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
-        mNotification = buildUploadNotification();
+        mNotification = buildUploadNotification(mNotificationManager);
         FwUpgradeConsole console = FwUpgradeConsole.getFwUpgradeConsole(node);
         if (console != null) {
             console.setLicenseConsoleListener(this);
             mBroadcastManager.sendBroadcast(getFwUpgradeStartIntent());
             mNotificationManager.notify(NOTIFICATION_ID, mNotification.build());
-            console.loadFw(FwUpgradeConsole.BOARD_FW, new FwFileDescriptor(getContentResolver(),
-                    file));
+            if(address!=null) {
+                console.loadFw(FirmwareType.BOARD_FW, new FwFileDescriptor(getContentResolver(),
+                        file), address);
+            }else{
+                console.loadFw(FirmwareType.BOARD_FW, new FwFileDescriptor(getContentResolver(),
+                        file));
+            }
         }//if console
     }
 
 
-    @Override
-    public void onVersionRead(final FwUpgradeConsole console,
-                              @FwUpgradeConsole.FirmwareType final int fwType,
-                              final FwVersion version) {
-        //not used
-    }
 }

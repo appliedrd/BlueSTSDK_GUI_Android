@@ -36,15 +36,16 @@
  */
 package com.st.BlueSTSDK.gui.demos;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.st.BlueSTSDK.Node;
 import com.st.BlueSTSDK.gui.DemosActivity;
+import com.st.BlueSTSDK.gui.util.FragmentUtil;
 
 /**
  * Base class for a fragment that have to show a particular demo inside the DemoActivity activity
@@ -61,12 +62,8 @@ public abstract class DemoFragment extends Fragment {
      * @param msg resource string
      */
     protected void showActivityToast(@StringRes final int msg) {
-        updateGui(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-                }//run
-            });
+        //run
+        updateGui(() -> Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show());
     }//showActivityToast
 
     /**
@@ -87,7 +84,7 @@ public abstract class DemoFragment extends Fragment {
      * @throws java.lang.ClassCastException if the activity doesn't extend DemosActivity
      */
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             DemosActivity  temp= (DemosActivity) activity;
@@ -112,9 +109,7 @@ public abstract class DemoFragment extends Fragment {
      * @param task task to run on the uithread
      */
     protected void updateGui(Runnable task){
-        Activity activity = getActivity();
-        if(activity!=null)
-            activity.runOnUiThread(task);
+        FragmentUtil.runOnUiThread(this,task);
     }
 
     protected @Nullable Node getNode(){
@@ -138,30 +133,18 @@ public abstract class DemoFragment extends Fragment {
      */
     protected abstract void disableNeedNotification(@NonNull Node node);
 
+    //onStateChange
     /**
      * listener that will be used for enable the notification when the node is connected
      */
-    private Node.NodeStateListener mNodeStatusListener = new Node.NodeStateListener() {
-        @Override
-        public void onStateChange(final Node node, Node.State newState, Node.State prevState) {
-            if (newState == Node.State.Connected) {
-                DemoFragment.this.updateGui(new Runnable() {
-                    @Override
-                    public void run() {
-                        enableNeededNotification(node);
-                    }
-                });
-            }else if (newState ==  Node.State.Lost || newState == Node.State.Dead ||
-                    newState == Node.State.Unreachable){
-                DemoFragment.this.updateGui(new Runnable() {
-                    @Override
-                    public void run() {
-                        disableNeedNotification(node);
-                    }
-                });
+    private Node.NodeStateListener mNodeStatusListener = (node, newState, prevState) -> {
+        if (newState == Node.State.Connected) {
+            DemoFragment.this.updateGui(() -> enableNeededNotification(node));
+        }else if (newState ==  Node.State.Lost || newState == Node.State.Dead ||
+                newState == Node.State.Unreachable){
+            DemoFragment.this.updateGui(() -> disableNeedNotification(node));
 
-            }
-        }//onStateChange
+        }
     };
 
     /**

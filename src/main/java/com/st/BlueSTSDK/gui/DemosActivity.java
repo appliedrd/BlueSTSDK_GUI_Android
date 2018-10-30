@@ -36,8 +36,6 @@
  */
 package com.st.BlueSTSDK.gui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,7 +45,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -67,12 +67,14 @@ import com.st.BlueSTSDK.Log.FeatureLogDB;
 import com.st.BlueSTSDK.Log.FeatureLogLogCat;
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;
+import com.st.BlueSTSDK.Utils.ConnectionOption;
 import com.st.BlueSTSDK.Utils.LogFeatureActivity;
+import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusController;
+import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusView;
 import com.st.BlueSTSDK.gui.demos.DemoDescriptionAnnotation;
 import com.st.BlueSTSDK.gui.demos.DemoFragment;
 import com.st.BlueSTSDK.gui.fwUpgrade.FwUpgradeActivity;
 import com.st.BlueSTSDK.gui.preferences.LogPreferenceFragment;
-import com.st.BlueSTSDK.gui.util.ConnectProgressDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,8 +96,8 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
     private final static String NODE_TAG_ARG = DemosActivity.class.getCanonicalName() + "" +
             ".NODE_TAG";
-    private final static String RESET_CACHE_ARG = DemosActivity.class.getCanonicalName() + "" +
-            ".RESET_CACHE";
+    private final static String CONNECTION_OPT_ARG = DemosActivity.class.getCanonicalName() + "" +
+            ".CONNECTION_OPT_ARG";
 
 
     private final static String DEBUG_CONSOLE = DemosActivity.class.getCanonicalName() + "" +
@@ -119,7 +121,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
      */
     protected static Intent getStartIntent(Context c, @NonNull Node node) {
         Intent i = new Intent(c, DemosActivity.class);
-        setIntentParameters(i,node,false);
+        setIntentParameters(i,node,ConnectionOption.buildDefault());
         return i;
     }//getStartIntent
 
@@ -131,15 +133,28 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
      * @param resetCache true if you want to reload the service and characteristics from the device
      * @return intent for start a demo activity that use the node as data source
      */
+    @Deprecated
     public static Intent getStartIntent(Context c, @NonNull Node node, boolean resetCache) {
         Intent i = new Intent(c, DemosActivity.class);
-        setIntentParameters(i,node,resetCache);
+        setIntentParameters(i,node,ConnectionOption.builder().resetCache(resetCache).build());
         return i;
     }//getStartIntent
 
+    public static Intent getStartIntent(Context c, @NonNull Node node,ConnectionOption option) {
+        Intent i = new Intent(c, DemosActivity.class);
+        setIntentParameters(i,node,option);
+        return i;
+    }//getStartIntent
+
+    @Deprecated
     protected static void setIntentParameters(Intent i, @NonNull Node node, boolean resetCache){
         i.putExtra(NODE_TAG_ARG,node.getTag());
-        i.putExtra(RESET_CACHE_ARG,resetCache);
+        i.putExtra(CONNECTION_OPT_ARG,ConnectionOption.builder().resetCache(resetCache).build());
+    }
+
+    protected static void setIntentParameters(Intent i, @NonNull Node node, ConnectionOption option){
+        i.putExtra(NODE_TAG_ARG,node.getTag());
+        i.putExtra(CONNECTION_OPT_ARG,option);
     }
 
     /*
@@ -176,35 +191,15 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
     private View mHelpView;
 
-    private ConnectProgressDialog mConnectionProgressDialog;
-
+    private ConnectionStatusView mConnectionView;
     private boolean mKeepConnectionOpen;
-    private boolean mShowKeepConnectionOpenNotification = false;
     private Node mNode;
-    private boolean mResetCacheOnConnection;
+    private ConnectionOption mConnectionOption;
 
     /**
      * true if we are showing the debug console
      */
     private boolean mShowDebugConsole = false;
-
-    /**
-     * this listener will automatically remove itself after the first connection
-     */
-    private Node.NodeStateListener mUpdateMenuWhenConnect = new Node.NodeStateListener() {
-        @Override
-        public void onStateChange(Node node, Node.State newState, Node.State prevState) {
-            node.removeNodeStateListener(this);
-            if(newState==Node.State.Connected){
-                DemosActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DemosActivity.this.invalidateOptionsMenu();
-                    }
-                });
-            }
-        }
-    };
 
 
     /**
@@ -227,30 +222,32 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mConnectionProgressDialog = new ConnectProgressDialog(this,"");
-
         //set default settings for the logging
         PreferenceManager.setDefaultValues(this, R.xml.pref_logging, false);
 
         setContentView(R.layout.activity_demos);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.demoDrawerLayout);
-        mNavigationTab = (NavigationView) findViewById(R.id.demoNavigationView);
+        mConnectionView = findViewById(R.id.demoConnectionStatus);
 
-        mConsoleText = (TextView) findViewById(R.id.consoleText);
-        mConsoleView = (ScrollView) findViewById(R.id.consoleView);
+        mDrawerLayout = findViewById(R.id.demoDrawerLayout);
+        mNavigationTab = findViewById(R.id.demoNavigationView);
+
+        mConsoleText = findViewById(R.id.consoleText);
+        mConsoleView = findViewById(R.id.consoleView);
 
         if (savedInstanceState == null) {
             Intent i = getIntent();
             mNode = Manager.getSharedInstance().getNodeWithTag(i.getStringExtra(NODE_TAG_ARG));
-            mResetCacheOnConnection = i.getBooleanExtra(RESET_CACHE_ARG,false);
+            mConnectionOption = i.getParcelableExtra(CONNECTION_OPT_ARG);
+            if(mConnectionOption==null)
+                mConnectionOption=ConnectionOption.buildDefault();
             mShowDebugConsole = i.getBooleanExtra(DEBUG_CONSOLE, false);
         } else {
             mNode = Manager.getSharedInstance().getNodeWithTag(savedInstanceState.getString(NODE_TAG_ARG));
             mShowDebugConsole = savedInstanceState.getBoolean(DEBUG_CONSOLE);
         }//if-else
 
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = findViewById(R.id.pager);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.showDemoList, R
                 .string.closeDemoList);
@@ -260,12 +257,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
         mHelpView = findViewById(R.id.helpDemoLayout);
         if (needShowHelpView()) {
-            mHelpView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    view.setVisibility(View.GONE);
-                }
-            });
+            mHelpView.setOnClickListener(view -> view.setVisibility(View.GONE));
             mHelpView.setVisibility(View.VISIBLE);
         }//if
 
@@ -300,7 +292,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             return;
 
         mPager.addOnPageChangeListener(mUpdateActivityTitle);
-        final DemosTabAdapter adapter=new DemosTabAdapter(node,getAllDemos(), getFragmentManager());
+        final DemosTabAdapter adapter=new DemosTabAdapter(node,getAllDemos(), getSupportFragmentManager());
         mPager.setAdapter(adapter);
         mUpdateActivityTitle.onPageSelected(mPager.getCurrentItem());
         int nDemo = adapter.getCount();
@@ -321,10 +313,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             mDrawerToggle.syncState();
             mHelpView.setVisibility(View.GONE);
         }
-
-        if(!node.isConnected()){
-            node.addNodeStateListener(mUpdateMenuWhenConnect);
-        }
     }
 
     @Override
@@ -335,6 +323,25 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     }
 
 
+    /*
+     * this listener will run only the first time we connect, and remove himself when the node
+     * connects
+     */
+    private Node.NodeStateListener mBuildDemoAdapterOnConnection = new Node.NodeStateListener() {
+        @Override
+        public void onStateChange(final Node node, Node.State newState, Node.State
+                prevState) {
+            if(newState==Node.State.Connected) {
+                runOnUiThread(() -> {
+                    invalidateOptionsMenu();
+                    buildDemoAdapter(node);
+                    showConsoleOutput(mShowDebugConsole);
+                });
+                node.removeNodeStateListener(this);
+            }//if
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -344,30 +351,12 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             return;
         }
         keepConnectionOpen(true,true);
-        NodeConnectionService.removeDisconnectNotification(this);
-        mConnectionProgressDialog.setNodeName(mNode.getName());
-        mConnectionProgressDialog.setState(mNode.getState());
-        mNode.addNodeStateListener(mConnectionProgressDialog);
+        ConnectionStatusController mConnectionStatusController = new ConnectionStatusController(mConnectionView, mNode);
+        getLifecycle().addObserver(mConnectionStatusController);
 
         if(!mNode.isConnected()){
-            mNode.addNodeStateListener(new Node.NodeStateListener() {
-                @Override
-                public void onStateChange(final Node node, Node.State newState, Node.State
-                        prevState) {
-                    if(newState==Node.State.Connected) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                invalidateOptionsMenu();
-                                buildDemoAdapter(node);
-                                showConsoleOutput(mShowDebugConsole);
-                            }
-                        });
-                        node.removeNodeStateListener(this);
-                    }//if
-                }
-            });
-            NodeConnectionService.connect(this,mNode, mResetCacheOnConnection);
+            mNode.addNodeStateListener(mBuildDemoAdapterOnConnection);
+            NodeConnectionService.connect(this,mNode, mConnectionOption);
         }else{
             buildDemoAdapter(mNode);
             showConsoleOutput(mShowDebugConsole);
@@ -377,7 +366,8 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     @Override
     protected void onPause() {
         if(mNode!=null) {
-            mNode.removeNodeStateListener(mConnectionProgressDialog);
+            //remove the listener in case we go on pause before finish the connection
+            mNode.removeNodeStateListener(mBuildDemoAdapterOnConnection);
             if (mShowDebugConsole) {
                 Debug debug = mNode.getDebug();
                 //remove the listener
@@ -393,8 +383,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         if(mNode!=null){
             if(!mKeepConnectionOpen){
                 NodeConnectionService.disconnect(this,mNode);
-            }else if(mShowKeepConnectionOpenNotification){
-                NodeConnectionService.displayDisconnectNotification(this,mNode);
             }
         }
         super.onStop();
@@ -427,10 +415,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         return super.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * @return true if you want enable the license manger, false otherwise
-     */
-    protected abstract boolean enableLicenseManager();
 
     /**
      * @return true if you want enable the fw uploading using the debug console, false otherwise
@@ -442,7 +426,17 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
      */
     @Override
     public void onBackPressed() {
-        keepConnectionOpen(false,false);
+
+        //check if the current fragment has a back stack and unroll that one before close the activity
+        for(Fragment f : getSupportFragmentManager().getFragments()) {
+            FragmentManager fm = f.getChildFragmentManager();
+            if(fm.getBackStackEntryCount()>0) {
+                fm.popBackStack();
+                return;
+            }
+        }
+        //else
+        keepConnectionOpen(false, false);
         super.onBackPressed();
     }
 
@@ -458,7 +452,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     @Override
     public void keepConnectionOpen(boolean keepOpen, boolean showNotification){
         mKeepConnectionOpen = keepOpen;
-        mShowKeepConnectionOpenNotification= keepOpen && showNotification;
     }
 
     /**
@@ -494,23 +487,17 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     private Debug.DebugOutputListener mDebugListener = new Debug.DebugOutputListener() {
         @Override
         public void onStdOutReceived(Debug debug, final String message) {
-            DemosActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mConsoleText.append(message);
-                    mConsoleView.fullScroll(View.FOCUS_DOWN);
-                }
+            DemosActivity.this.runOnUiThread(() -> {
+                mConsoleText.append(message);
+                mConsoleView.fullScroll(View.FOCUS_DOWN);
             });
         }
 
         @Override
         public void onStdErrReceived(Debug debug, final String message) {
-            DemosActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mConsoleText.append(message);
-                    mConsoleView.fullScroll(View.FOCUS_DOWN);
-                }
+            DemosActivity.this.runOnUiThread(() -> {
+                mConsoleText.append(message);
+                mConsoleView.fullScroll(View.FOCUS_DOWN);
             });
         }
 
@@ -588,6 +575,8 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         CharSequence title = menuItem.getTitle();
         FragmentPagerAdapter adapter = (FragmentPagerAdapter) mPager.getAdapter();
+        if(adapter==null)
+            return false;
         int nDemo = adapter.getCount();
         for (int i = 0; i < nDemo; i++) {
             if (adapter.getPageTitle(i).equals(title)) {
@@ -619,15 +608,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         keepConnectionOpen(true,false);
         Intent i = SettingsActivityWithNode.getStartIntent(c,n,true);
         startActivity(i);
-    }
-
-    public void startLicenseManagerActivity(Node node) {
-    }
-
-    public void startFwUpgradeActivity(Node node) {
-        if(!enableFwUploading())
-            return;
-        startFwUpgradeActivity(this,node);
     }
 
     protected void startFwUpgradeActivity(Context context, Node node) {
@@ -682,7 +662,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             return requireOneOf.length == 0;
         }//demoIsWorking
 
-        public DemosTabAdapter(@NonNull Node node,Class<? extends
+        DemosTabAdapter(@NonNull Node node, Class<? extends
                 DemoFragment>[] demos, FragmentManager fm) {
             super(fm);
             for (Class<? extends DemoFragment> demo : demos ) {
@@ -715,7 +695,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             return mDemos.get(position).getAnnotation(DemoDescriptionAnnotation.class).name();
         }
 
-        public @DrawableRes int getDemoIconRes(int position) {
+        @DrawableRes int getDemoIconRes(int position) {
             return mDemos.get(position).getAnnotation(DemoDescriptionAnnotation.class).iconRes();
         }
     }

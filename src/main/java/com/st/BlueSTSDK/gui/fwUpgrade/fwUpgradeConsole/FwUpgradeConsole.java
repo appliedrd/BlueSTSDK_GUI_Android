@@ -41,8 +41,10 @@ import android.support.annotation.Nullable;
 
 import com.st.BlueSTSDK.Debug;
 import com.st.BlueSTSDK.Node;
-import com.st.BlueSTSDK.Utils.FwVersion;
+import com.st.BlueSTSDK.gui.fwUpgrade.FirmwareType;
 import com.st.BlueSTSDK.gui.fwUpgrade.fwUpgradeConsole.util.FwFileDescriptor;
+
+import com.st.STM32WB.fwUpgrade.FwUpgradeConsoleSTM32WB;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -54,45 +56,29 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class FwUpgradeConsole {
 
     /**
-     * enum for choose the type of firmware to upload
-     */
-    @IntDef({BLE_FW, BOARD_FW})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface FirmwareType {}
-
-    /**
-     * constant used for upload the bluetooth low energy firmware
-     */
-    public static final int BLE_FW = 0;
-
-    /**
-     * constant used for upload the node firmware
-     */
-    public static final int BOARD_FW = 1;
-
-    /**
      * get an instance of this class that works with the node
      * @param node node where upload the firmware
      * @return null if isn't possible upload the firmware in the node, or a class for do it
      */
     static public @Nullable FwUpgradeConsole getFwUpgradeConsole(Node node){
-        Debug debug = node.getDebug();
-        if(debug==null)
-            return null;
+        FwUpgradeConsoleSTM32WB stm32wbConsole = FwUpgradeConsoleSTM32WB.buildForNode(node);
+        if( stm32wbConsole!=null)
+            return stm32wbConsole;
 
-        switch (node.getType()) {
-            case NUCLEO:
-            case SENSOR_TILE:
-            case BLUE_COIN:
-                return new FwUpgradeConsoleNucleo(debug);
+        Debug debug = node.getDebug();
+
+        if(debug !=null) {
+            switch (node.getType()) {
+                case NUCLEO:
+                case SENSOR_TILE:
+                case BLUE_COIN:
+                case STEVAL_BCN002V1:
+                    return new FwUpgradeConsoleNucleo(debug);
+            }
         }
         return  null;
     }
 
-    /**
-     * console where send the command
-     */
-    protected Debug mConsole;
 
     /**
      * object where notify the command response
@@ -101,34 +87,24 @@ public abstract class FwUpgradeConsole {
 
     /**
      *
-     * @param console console where send the command
      * @param callback object where notify the command answer
      */
-    protected FwUpgradeConsole(Debug console, FwUpgradeCallback callback) {
-        mConsole = console;
+    protected FwUpgradeConsole(FwUpgradeCallback callback) {
         mCallback = callback;
     }
-
-    /**
-     * @return true if the class is already executing a command
-     */
-    abstract public boolean isWaitingAnswer();
-
-    /**
-     * ask to the node the firmware version, the result will be notify using the method:
-     * {@link FwUpgradeConsole.FwUpgradeCallback#onVersionRead(FwUpgradeConsole, int, FwVersion)}
-     * @param type version to read
-     * @return true if the command is correctly send
-     */
-    abstract public boolean readVersion(@FirmwareType int type);
 
     /**
      * upload the file into the node
      * @param type type of firmware that we are going to upload
      * @param fwFile file path
+     * @param startingAddress memory address where load the firmware file
      * @return true if the command is correctly start
      */
-    abstract public boolean loadFw(@FirmwareType int type, FwFileDescriptor fwFile);
+    abstract public boolean loadFw(@FirmwareType int type, FwFileDescriptor fwFile, long startingAddress);
+
+    public boolean loadFw(@FirmwareType int type, FwFileDescriptor fwFile){
+        return loadFw(type,fwFile,0);
+    }
 
     /**
      * change the object where notify the commands answer
@@ -173,14 +149,6 @@ public abstract class FwUpgradeConsole {
         int ERROR_UNKNOWN=3;
 
         /**
-         * called when the node respond to the readVersion command
-         * @param console object where the readVersion was called
-         * @param type version read
-         * @param version object with the version read, if some error happen it will be null
-         */
-        void onVersionRead(FwUpgradeConsole console,@FirmwareType int type,@Nullable FwVersion version);
-
-        /**
          * called when the loadFw finish correctly
          * @param console object where loadFw was called
          * @param fwFile file upload to the node
@@ -209,10 +177,6 @@ public abstract class FwUpgradeConsole {
      * Utility class that implement the {@link FwUpgradeCallback} interface with empty methods
      */
     public static class SimpleFwUpgradeCallback implements FwUpgradeCallback{
-
-        @Override
-        public void onVersionRead(FwUpgradeConsole console, @FirmwareType int type,
-                                  FwVersion version) {  }
 
         @Override
         public void onLoadFwComplete(FwUpgradeConsole console, FwFileDescriptor fwFile) {  }

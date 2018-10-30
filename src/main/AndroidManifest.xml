@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017  STMicroelectronics – All rights reserved
   ~ The STMicroelectronics corporate logo is a trademark of STMicroelectronics
   ~
@@ -41,6 +40,9 @@
     <!-- needed for read the fw file -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <!-- needed for the NodeConnectionService -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:allowBackup="true"
         android:supportsRtl="true"
@@ -56,9 +58,7 @@
         <activity
             android:name=".SettingsActivityWithNode"
             android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.Settings">
-        </activity>
-
+            android:theme="@style/AppTheme.Settings" />
         <activity
             android:name=".fwUpgrade.FwUpgradeActivity"
             android:label="@string/title_activity_fw_upgrade" />
@@ -70,15 +70,6 @@
             android:name=".NodeConnectionService"
             android:enabled="true"
             android:exported="false" />
-
-        <activity
-            android:name=".privacyPolicy.PrivacyPolicyActivity"
-            android:label="@string/title_activity_privacy_policy"
-            android:parentActivityName=".AboutActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.st.BlueSTSDK.gui.AboutActivity" />
-        </activity>
         <activity
             android:name=".thirdPartyLibLicense.LibLicenseActivity"
             android:label="License"
@@ -88,13 +79,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.st.BlueSTSDK.gui.AboutActivity" />
         </activity>
-        <activity android:name=".thirdPartyLibLicense.LibLicenseDetailsActivity"
+        <activity
+            android:name=".thirdPartyLibLicense.LibLicenseDetailsActivity"
             android:label="Details"
             android:parentActivityName=".thirdPartyLibLicense.LibLicenseActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.st.BlueSTSDK.gui.thirdPartyLibLicense.LibLicenseActivity" />
         </activity>
+        <activity
+            android:name="com.st.STM32WB.fwUpgrade.FwUpgradeSTM32WBActivity"
+            android:label="@string/title_activity_fw_upgrade_stm32_wb"/>
+
+        <activity android:name="com.st.STM32WB.p2pDemo.DemoSTM32WBActivity"/>
     </application>
 
 </manifest>
