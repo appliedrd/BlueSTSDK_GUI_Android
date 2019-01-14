@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2017  STMicroelectronics – All rights reserved
   ~ The STMicroelectronics corporate logo is a trademark of STMicroelectronics
@@ -36,6 +35,18 @@
   ~ OF SUCH DAMAGE.
   -->
 
-<resources>
-    <string name="title_activity_approve_license">批准许可证</string>
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.st.BlueSTSDK.gui.MainActivity">
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows.-->
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:fitsSystemWindows="true"
+                 android:visibility="visible"
+                 android:id="@+id/bluestsdk_main_content_view"/>
+
+</FrameLayout>
