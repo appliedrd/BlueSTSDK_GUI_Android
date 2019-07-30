@@ -47,7 +47,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         consumerProguardFiles 'proguard-rules.pro'
 
@@ -80,17 +80,16 @@ dependencies {
 
     androidTestImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
-    androidTestImplementation "com.android.support.test:rules:$rootProject.rulesVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation "androidx.test:runner:$rootProject.androidx_runnerVersion"
+    androidTestImplementation "androidx.test:rules:$rootProject.androidx_rulesVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.androidx_espressoVersion"
 
     implementation project(':BlueSTSDK')
 
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-v13:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
-    implementation "android.arch.lifecycle:extensions:$rootProject.archLifecycleVersion"
+    implementation "androidx.appcompat:appcompat:$rootProject.androidx_appCompatVersion"
+    implementation "com.google.android.material:material:$rootProject.androidx_materialVersion"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.androidx_recycleViewVersion"
+    implementation "androidx.cardview:cardview:$rootProject.androidx_cardViewVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.androidx_constraintLayoutVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.androidx_lifecycleExtVersion"
 }

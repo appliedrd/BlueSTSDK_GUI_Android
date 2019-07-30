@@ -46,8 +46,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.LocalBroadcastManager;
 
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;

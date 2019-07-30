@@ -45,7 +45,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.support.v4.content.LocalBroadcastManager
+import androidx.core.content.LocalBroadcastManager
 
 import com.st.BlueSTSDK.Node
 import com.st.BlueSTSDK.gui.fwUpgrade.FwUpgradeActivity

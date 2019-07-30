@@ -38,7 +38,7 @@
 package com.st.BlueSTSDK.gui.util;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
+import androidx.core.app.Fragment;
 
 /**
  * Utility class for the framgments

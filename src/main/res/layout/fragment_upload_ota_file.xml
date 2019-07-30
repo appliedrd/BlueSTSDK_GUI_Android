@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fwUpgrade.uploadFwFile.UploadOtaFileFragment">
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -118,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="otaUpload_uploadMessage,otaUpload_uploadProgress" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/otaUpload_startUploadButton"
