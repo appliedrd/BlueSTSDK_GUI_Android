@@ -47,8 +47,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
@@ -248,7 +249,8 @@ public class NodeConnectionService extends Service {
      * ic_dialog_alert icon
      * @return icon to use in the notificaiton
      */
-    private @DrawableRes int getResourceLogo(){
+    private @DrawableRes
+    int getResourceLogo(){
         String packageName = getPackageName();
         @DrawableRes int logo=R.drawable.ic_warning_24dp;
         try {

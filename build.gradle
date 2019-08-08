@@ -86,6 +86,7 @@ dependencies {
 
     implementation project(':BlueSTSDK')
 
+    implementation "androidx.annotation:annotation:$rootProject.androidx_annotationVersion"
     implementation "androidx.appcompat:appcompat:$rootProject.androidx_appCompatVersion"
     implementation "com.google.android.material:material:$rootProject.androidx_materialVersion"
     implementation "androidx.recyclerview:recyclerview:$rootProject.androidx_recycleViewVersion"

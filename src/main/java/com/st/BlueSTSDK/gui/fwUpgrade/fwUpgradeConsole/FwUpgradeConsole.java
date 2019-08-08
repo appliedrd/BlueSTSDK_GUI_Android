@@ -36,9 +36,10 @@
  */
 package com.st.BlueSTSDK.gui.fwUpgrade.fwUpgradeConsole;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.st.BlueNRG.fwUpgrade.FwUpgradeConsoleBlueNRG;
 import com.st.BlueSTSDK.Debug;
@@ -74,7 +75,7 @@ public abstract class FwUpgradeConsole {
      * @param node node where upload the firmware
      * @return null if isn't possible upload the firmware in the node, or a class for do it
      */
-    static public @Nullable FwUpgradeConsole getFwUpgradeConsole(@NonNull Node node,@Nullable FwVersion version){
+    static public @Nullable FwUpgradeConsole getFwUpgradeConsole(@NonNull Node node, @Nullable FwVersion version){
         FwUpgradeConsoleSTM32WB stm32wbConsole = FwUpgradeConsoleSTM32WB.buildForNode(node);
         if( stm32wbConsole!=null)
             return stm32wbConsole;

@@ -35,7 +35,8 @@
  */
 package com.st.BlueNRG.fwUpgrade.feature;
 
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.st.BlueSTSDK.Features.DeviceTimestampFeature;
 import com.st.BlueSTSDK.Features.Field;
@@ -80,7 +81,8 @@ public class ImageFeature extends DeviceTimestampFeature {
         return DATA_MIN;
     }
 
-    public @Nullable FwVersion getProtocolVer(Sample s){
+    public @Nullable
+    FwVersion getProtocolVer(Sample s){
         if(hasValidIndex(s,PROTOCOL_VAR_MAJOR_INDEX)&& hasValidIndex(s,PROTOCOL_VER_MINOR_INDEX)){
             return new FwVersion(s.data[PROTOCOL_VAR_MAJOR_INDEX].byteValue(),
                     s.data[PROTOCOL_VER_MINOR_INDEX].byteValue(),0);

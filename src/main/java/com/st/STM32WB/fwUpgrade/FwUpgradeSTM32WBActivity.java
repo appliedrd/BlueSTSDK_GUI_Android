@@ -40,12 +40,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import androidx.core.app.FragmentManager;
-import androidx.core.app.FragmentTransaction;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.MenuItem;
 
 import com.st.BlueSTSDK.Manager;
@@ -71,7 +73,7 @@ public class FwUpgradeSTM32WBActivity extends AppCompatActivity implements Searc
     private static final String UPLOAD_NODE_TAG = FwUpgradeSTM32WBActivity.class.getCanonicalName()+".UPLOAD_NODE_TAG";
 
     public static Intent getStartIntent(@NonNull Context context, @Nullable Node node, @Nullable Uri file,
-                                        @Nullable Long address,@Nullable Integer fwType){
+                                        @Nullable Long address, @Nullable Integer fwType){
         Intent fwUpgradeActivity = new Intent(context, FwUpgradeSTM32WBActivity.class);
 
         if(node!=null){

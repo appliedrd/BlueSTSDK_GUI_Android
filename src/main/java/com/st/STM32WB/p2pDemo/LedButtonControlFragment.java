@@ -39,8 +39,9 @@ package com.st.STM32WB.p2pDemo;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import androidx.constraintlayout.Group;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;

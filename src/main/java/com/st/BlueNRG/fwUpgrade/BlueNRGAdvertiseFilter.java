@@ -1,7 +1,8 @@
 package com.st.BlueNRG.fwUpgrade;
 
-import android.support.annotation.Nullable;
 import android.util.SparseArray;
+
+import androidx.annotation.Nullable;
 
 import com.st.BlueSTSDK.Node;
 import com.st.BlueSTSDK.Utils.advertise.AdvertiseFilter;

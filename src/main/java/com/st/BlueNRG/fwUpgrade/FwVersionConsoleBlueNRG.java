@@ -36,7 +36,7 @@
  */
 package com.st.BlueNRG.fwUpgrade;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.st.BlueNRG.fwUpgrade.feature.ImageFeature;
 import com.st.BlueSTSDK.Feature;
