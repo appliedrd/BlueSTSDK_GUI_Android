@@ -42,17 +42,18 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatDelegate;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +61,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
 import com.st.BlueSTSDK.Debug;
 import com.st.BlueSTSDK.Feature;
 import com.st.BlueSTSDK.Log.FeatureLogCSVFile;
@@ -486,7 +488,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
      */
     private Debug.DebugOutputListener mDebugListener = new Debug.DebugOutputListener() {
         @Override
-        public void onStdOutReceived(Debug debug, final String message) {
+        public void onStdOutReceived(@NonNull Debug debug, @NonNull final String message) {
             DemosActivity.this.runOnUiThread(() -> {
                 mConsoleText.append(message);
                 mConsoleView.fullScroll(View.FOCUS_DOWN);
@@ -494,7 +496,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         }
 
         @Override
-        public void onStdErrReceived(Debug debug, final String message) {
+        public void onStdErrReceived(@NonNull Debug debug, @NonNull final String message) {
             DemosActivity.this.runOnUiThread(() -> {
                 mConsoleText.append(message);
                 mConsoleView.fullScroll(View.FOCUS_DOWN);
@@ -502,7 +504,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         }
 
         @Override
-        public void onStdInSent(Debug debug, String message, boolean writeResult) {
+        public void onStdInSent(@NonNull Debug debug, @NonNull String message, boolean writeResult) {
         }
     };
 
@@ -644,7 +646,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
             //check that we have all the feature in the requeareAll field
             //return false if one feature is missing
-            Class<? extends Feature> requireAll[] = desc.requareAll();
+            Class<? extends Feature>[] requireAll = desc.requareAll();
             for (Class<? extends Feature> f : requireAll) {
                 if (node.getFeature(f) == null)
                     return false;
@@ -652,7 +654,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
             //check that we have all the feature in the requeareOne field
             //return true if we have almost one feature
-            Class<? extends Feature> requireOneOf[] = desc.requareOneOf();
+            Class<? extends Feature>[] requireOneOf = desc.requareOneOf();
             for (Class<? extends Feature> f : requireOneOf) {
                 if (node.getFeature(f)  != null)
                     return true;
@@ -695,7 +697,8 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             return mDemos.get(position).getAnnotation(DemoDescriptionAnnotation.class).name();
         }
 
-        @DrawableRes int getDemoIconRes(int position) {
+        @DrawableRes
+        int getDemoIconRes(int position) {
             return mDemos.get(position).getAnnotation(DemoDescriptionAnnotation.class).iconRes();
         }
     }

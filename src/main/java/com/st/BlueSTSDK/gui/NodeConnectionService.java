@@ -47,10 +47,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 
 import com.st.BlueSTSDK.Manager;
@@ -116,7 +118,7 @@ public class NodeConnectionService extends Service {
         if(option==null)
             option = ConnectionOption.builder().build();
         i.putExtra(CONNECTION_PARAM_ARG,option);
-        c.startService(i);
+        ContextCompat.startForegroundService(c,i);
     }
 
     /**
@@ -149,7 +151,7 @@ public class NodeConnectionService extends Service {
      * @param n node to disconnect
      */
     static public void disconnect(Context c, Node n){
-        c.startService(buildDisconnectIntent(c,n));
+        ContextCompat.startForegroundService(c,buildDisconnectIntent(c,n));
     }
 
     /**
@@ -157,7 +159,7 @@ public class NodeConnectionService extends Service {
      * @param c context used for crate the intent
      */
     static public void disconnectAllNodes(Context c){
-        c.startService(buildDisconnectAllIntent(c));
+        ContextCompat.startForegroundService(c,buildDisconnectAllIntent(c));
     }
 
 
@@ -194,24 +196,28 @@ public class NodeConnectionService extends Service {
         }
 
         String action = intent.getAction();
-
+        Log.d("ConnectionService","id: "+startId+" action:"+action);
         if(CONNECT_ACTION.equals(action)){
             connect(startId,intent);
         }else if (DISCONNECT_ACTION.equals(action)) {
-            disconnect(intent);
+            disconnect(startId,intent);
         }else if (DISCONNECT_ALL_ACTION.equals(action)){
-            disconnectAll();
+            disconnectAll(startId);
         }
 
-
         return START_STICKY;
+    }
+
+    private void disconnectAll(int startId) {
+        startForeground(startId,buildDisconnectNotification());
+        disconnectAll();
     }
 
     /**
      * if present remove the connection notification
      */
     private void removeConnectionNotification() {
-        stopForeground(true);
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
     }
 
     @Override
@@ -298,6 +304,21 @@ public class NodeConnectionService extends Service {
         return notificationBuilder.build();
     }
 
+    private Notification buildDisconnectNotification(){
+        @DrawableRes int notificationIcon = getResourceLogo();
+
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this,createNotificationChannel())
+                        .setContentTitle(getString(R.string.NodeConn_nodeDisconnectionTitile))
+                        .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .setColor(ContextCompat.getColor(this,R.color.colorPrimary))
+                        .setContentText(getString(R.string.NodeConn_nodeDisconnectionDesc));
+        notificationBuilder.setSmallIcon(notificationIcon);
+
+        return notificationBuilder.build();
+    }
+
     /**
      * start the connection with the node
      * @param intent node to connect
@@ -342,16 +363,18 @@ public class NodeConnectionService extends Service {
 
     /**
      * disconnect the node
+     * @param startId
      * @param intent node to disconnect
      */
-    private void disconnect(Intent intent) {
+    private void disconnect(int startId,Intent intent) {
+        startForeground(startId,buildDisconnectNotification());
         String tag = intent.getStringExtra(NODE_TAG_ARG);
         Log.d("NodeConnectionService","disconnect" + tag);
 
         Node n = findConnectedNodeWithTag(tag);
         if(n==null){
             if(mConnectedNodes.size()==0){
-                stopForeground(true);
+                removeConnectionNotification();
                 stopSelf();
             }//if
             return;
@@ -362,7 +385,7 @@ public class NodeConnectionService extends Service {
         n.disconnect();
 
         if(mConnectedNodes.size()==0){
-            stopForeground(true);
+            removeConnectionNotification();
             stopSelf();
         }//if
 

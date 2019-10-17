@@ -39,9 +39,10 @@ package com.st.STM32WB.p2pDemo;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.constraint.Group;
-import android.support.v4.app.NavUtils;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -97,7 +98,7 @@ public class LedButtonControlFragment extends RssiDemoFragment {
     private Feature.FeatureListener mButtonListener = new  Feature.FeatureListener () {
 
         @Override
-        public void onUpdate(Feature f, Feature.Sample sample) {
+        public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
             if(mCurrentDevice==null){ //first time
                 mCurrentDevice = FeatureSwitchStatus.getDeviceSelection(sample);
                 updateGui(()-> showDeviceDetected(mCurrentDevice));
@@ -199,7 +200,7 @@ public class LedButtonControlFragment extends RssiDemoFragment {
     private static final int ENABLE_REBOOT_THREAD_ADVERTISE_MASK = 0x00004000;
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         Node node = getNode();
         if(node!=null && ((node.getAdvertiseBitMask() & ENABLE_REBOOT_THREAD_ADVERTISE_MASK) != 0)){

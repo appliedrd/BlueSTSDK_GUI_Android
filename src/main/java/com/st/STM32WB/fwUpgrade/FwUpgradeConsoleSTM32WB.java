@@ -36,8 +36,9 @@
  */
 package com.st.STM32WB.fwUpgrade;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
+import androidx.annotation.NonNull;
 
 import com.st.BlueSTSDK.Feature;
 import com.st.BlueSTSDK.Node;
@@ -54,7 +55,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class FwUpgradeConsoleSTM32WB extends FwUpgradeConsole {
 
-    public static FwUpgradeConsoleSTM32WB buildForNode(Node node){
+    public static @Nullable
+    FwUpgradeConsoleSTM32WB buildForNode(Node node){
         OTAControlFeature control = node.getFeature(OTAControlFeature.class);
         OTAFileUpload upload = node.getFeature(OTAFileUpload.class);
         OTABoardWillRebootFeature reboot = node.getFeature(OTABoardWillRebootFeature.class);

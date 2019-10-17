@@ -36,11 +36,12 @@
  */
 package com.st.BlueNRG.fwUpgrade;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 
 import com.st.BlueSTSDK.Feature;
 import com.st.BlueSTSDK.Node;
@@ -230,7 +231,7 @@ public class FwUpgradeConsoleBlueNRG extends FwUpgradeConsole {
 
     private Feature.FeatureListener onImageFeature = new Feature.FeatureListener(){
         @Override
-        public void onUpdate(@NonNull Feature f, Feature.Sample sample) {
+        public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
             flash_LB = ImageFeature.getFlashLowerBound(sample);
             flash_UB = ImageFeature.getFlashUpperBound(sample);
             // Set base address
@@ -258,7 +259,7 @@ public class FwUpgradeConsoleBlueNRG extends FwUpgradeConsole {
     private Feature.FeatureListener onNewImageFeature = new Feature.FeatureListener() {
         private int retries = 0;
         @Override
-        public void onUpdate(@NonNull Feature f, Feature.Sample sample) {
+        public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
             byte otaAckEveryRead = NewImageFeature.getOtaAckEvery(sample);
             if(protocolState == ProtocolStatePhase.READ_PARAM_SDK_SERVER_VERSION) {
                 SDKVersion310higher = otaAckEveryRead >= 2;
@@ -290,7 +291,7 @@ public class FwUpgradeConsoleBlueNRG extends FwUpgradeConsole {
 
     private Feature.FeatureListener onNewImageTUContentFeature = new Feature.FeatureListener(){
         @Override
-        public void onUpdate(@NonNull Feature f, Feature.Sample sample) {
+        public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
             Log.d("BlueNRG1", "start fw_image_packet_size: "+fw_image_packet_size+"   blueNRGClientType: "+ blueNRGClientType);
             // server/board read
             int paramBlueNRG2 = NewImageTUContentFeature.getExpectedWriteLength(sample);
@@ -316,7 +317,7 @@ public class FwUpgradeConsoleBlueNRG extends FwUpgradeConsole {
 
     private Feature.FeatureListener onAckNotification = new Feature.FeatureListener(){
         @Override
-        public void onUpdate(@NonNull Feature f, Feature.Sample sample) {
+        public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
             //reset the timeout
             mTimeout.removeCallbacks(onTimeout);
             retriesForMissedNotification = 0;

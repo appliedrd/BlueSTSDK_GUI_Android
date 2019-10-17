@@ -38,16 +38,17 @@ package com.st.STM32WB.p2pDemo;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.st.BlueSTSDK.gui.R;
 import com.st.STM32WB.p2pDemo.feature.FeatureControlLed;
@@ -87,7 +88,7 @@ public class LedButtonNetworkControlFragment extends RssiDemoFragment {
     private Feature.FeatureListener mButtonListener = new  Feature.FeatureListener () {
 
         @Override
-        public void onUpdate(Feature f, Feature.Sample sample) {
+        public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
             final DeviceID deviceId = FeatureSwitchStatus.getDeviceSelection(sample);
             final boolean isPressed = FeatureSwitchStatus.isSwitchOn(sample);
 

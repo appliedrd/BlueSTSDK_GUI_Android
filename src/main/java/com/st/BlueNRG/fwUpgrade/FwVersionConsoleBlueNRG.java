@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017  STMicroelectronics – All rights reserved
+ * Copyright (c) 2019  STMicroelectronics – All rights reserved
  * The STMicroelectronics corporate logo is a trademark of STMicroelectronics
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -36,7 +36,7 @@
  */
 package com.st.BlueNRG.fwUpgrade;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.st.BlueNRG.fwUpgrade.feature.ImageFeature;
 import com.st.BlueSTSDK.Feature;
@@ -75,7 +75,7 @@ public class FwVersionConsoleBlueNRG extends FwVersionConsole {
     public boolean readVersion(@FirmwareType int type) {
         Feature.FeatureListener onImageFeature = new Feature.FeatureListener(){
             @Override
-            public void onUpdate(@NonNull Feature f, Feature.Sample sample) {
+            public void onUpdate(@NonNull Feature f, @NonNull Feature.Sample sample) {
                 if(mCallback!=null) {
                     FwVersion protocolVer = mRangeMem.getProtocolVer(sample);
                     if(protocolVer!=null) {

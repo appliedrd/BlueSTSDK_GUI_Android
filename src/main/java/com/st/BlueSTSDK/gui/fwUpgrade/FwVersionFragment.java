@@ -37,18 +37,17 @@
 package com.st.BlueSTSDK.gui.fwUpgrade;
 
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.st.BlueSTSDK.Utils.FwVersion;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.st.BlueSTSDK.gui.R;
 import com.st.BlueSTSDK.gui.fwUpgrade.fwVersionConsole.FwVersionBoard;
 
@@ -124,7 +123,7 @@ public class FwVersionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FwVersionViewModel viewModel =  ViewModelProviders.of(requireActivity()).get(FwVersionViewModel.class);
-        viewModel.isWaitingFwVersion().observe(this, isLoading -> {
+        viewModel.isWaitingFwVersion().observe(getViewLifecycleOwner(), isLoading -> {
             if(isLoading!=null && !isLoading){
                 mLoadingView.setVisibility(View.GONE);
                 mContentView.setVisibility(View.VISIBLE);
@@ -134,7 +133,7 @@ public class FwVersionFragment extends Fragment {
             }
         });
 
-        viewModel.getFwVersion().observe(this, fwVersion -> {
+        viewModel.getFwVersion().observe(getViewLifecycleOwner(), fwVersion -> {
             if(fwVersion==null){
                 mName.setText(R.string.fwVersion_unknown);
                 mVersion.setText(R.string.fwVersion_unknown);
