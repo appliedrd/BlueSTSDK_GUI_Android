@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
         content.findViewById(R.id.bluestsdk_main_aboutButton).setOnClickListener(this::startAboutActivity);
         content.findViewById(R.id.bluestsdk_main_searchButton).setOnClickListener(this::startScanBleActivity);
+        content.findViewById(R.id.offlineTest).setOnClickListener(this::startOfflineActivity);
         return content;
     }
 
@@ -207,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view view pressed
      */
     public void startAboutActivity(View view){}
+
+    public void startOfflineActivity(View view) {}
 
     /**
      * tell witch file is containing the privacy policy, the file content will be shown in the dialog
