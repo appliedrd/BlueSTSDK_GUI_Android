@@ -387,7 +387,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.acitivity_demos, menu);
+        //getMenuInflater().inflate(R.menu.acitivity_demos, menu);
 
 /*        if (mShowDebugConsole) {
             menu.findItem(R.id.showDebugConsole).setTitle(R.string.hideDebugConsole);
