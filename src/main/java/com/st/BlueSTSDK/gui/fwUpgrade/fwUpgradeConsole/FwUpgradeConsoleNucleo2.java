@@ -273,7 +273,7 @@ public class FwUpgradeConsoleNucleo2 extends FwUpgradeConsole {
          * @return true if the message contain the crc code that we have send
          */
         private boolean checkCrc(String message){
-            byte[] rcvCrc = message.getBytes(Charset.forName("ISO-8859-1"));
+            byte[] rcvCrc = Debug.stringToByte(message);
             byte[] myCrc = NumberConversion.LittleEndian.uint32ToBytes(mCrc);
             return Arrays.equals(rcvCrc,myCrc);
         }
@@ -335,7 +335,6 @@ public class FwUpgradeConsoleNucleo2 extends FwUpgradeConsole {
                     mNodeReadyToReceiveFile = true;
                     mNPackageReceived=0;
                     //wait update of the connection interval
-                    Log.d("fwupgrade","board crc ok");
                     mTimeout.postDelayed(this::sendPackageBlock,500);
 
                 }else
