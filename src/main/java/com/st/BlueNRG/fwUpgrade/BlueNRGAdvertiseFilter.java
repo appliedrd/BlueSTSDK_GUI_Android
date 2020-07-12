@@ -36,7 +36,7 @@
  */
 package com.st.BlueNRG.fwUpgrade;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.SparseArray;
 
 import com.st.BlueSTSDK.Node;

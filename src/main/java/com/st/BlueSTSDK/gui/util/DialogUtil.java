@@ -39,7 +39,7 @@ package com.st.BlueSTSDK.gui.util;
 
 
 import android.app.Dialog;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * class with utility function to manage dialogs

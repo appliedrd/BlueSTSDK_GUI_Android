@@ -40,9 +40,9 @@ package com.st.BlueSTSDK.gui.thirdPartyLibLicense;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.st.BlueSTSDK.gui.R;

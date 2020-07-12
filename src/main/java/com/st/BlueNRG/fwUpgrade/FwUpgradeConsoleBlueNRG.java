@@ -36,7 +36,7 @@
  */
 package com.st.BlueNRG.fwUpgrade;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import android.os.Handler;
