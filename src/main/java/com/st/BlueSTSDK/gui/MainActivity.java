@@ -47,10 +47,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
         content.findViewById(R.id.bluestsdk_main_aboutButton).setOnClickListener(this::startAboutActivity);
         content.findViewById(R.id.bluestsdk_main_searchButton).setOnClickListener(this::startScanBleActivity);
+        content.findViewById(R.id.offlineTest).setOnClickListener(this::startOfflineActivity);
         return content;
     }
 
@@ -207,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view view pressed
      */
     public void startAboutActivity(View view){}
+
+    public void startOfflineActivity(View view) {}
 
     /**
      * tell witch file is containing the privacy policy, the file content will be shown in the dialog

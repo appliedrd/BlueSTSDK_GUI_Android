@@ -42,17 +42,17 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.core.view.GravityCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,9 +62,6 @@ import android.widget.Toast;
 
 import com.st.BlueSTSDK.Debug;
 import com.st.BlueSTSDK.Feature;
-import com.st.BlueSTSDK.Log.FeatureLogCSVFile;
-import com.st.BlueSTSDK.Log.FeatureLogDB;
-import com.st.BlueSTSDK.Log.FeatureLogLogCat;
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;
 import com.st.BlueSTSDK.Utils.ConnectionOption;
@@ -74,7 +71,6 @@ import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusView;
 import com.st.BlueSTSDK.gui.demos.DemoDescriptionAnnotation;
 import com.st.BlueSTSDK.gui.demos.DemoFragment;
 import com.st.BlueSTSDK.gui.fwUpgrade.FwUpgradeActivity;
-import com.st.BlueSTSDK.gui.preferences.LogPreferenceFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -391,15 +387,16 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.acitivity_demos, menu);
+        //getMenuInflater().inflate(R.menu.acitivity_demos, menu);
 
-        if (mShowDebugConsole) {
+/*        if (mShowDebugConsole) {
             menu.findItem(R.id.showDebugConsole).setTitle(R.string.hideDebugConsole);
         } else {
             menu.findItem(R.id.showDebugConsole).setTitle(R.string.showDebugConsole);
-        }//if-else
+        }*///if-else
 
         //hide debug stuff if not available
+/*
         if(mNode!=null) {
             Debug debug = mNode.getDebug();
             if (debug == null) {
@@ -411,7 +408,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
                 menu.findItem(R.id.menu_start_fw_upgrade).setVisible(false);
             }
         }
-
+*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -462,7 +459,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
      */
     @Override
     protected Feature.FeatureLoggerListener getLogger() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+/*        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String logType = sharedPref.getString(LogPreferenceFragment.KEY_PREF_LOG_STORE, "LogCat");
         String dumpPath = getLogDirectory();
         switch (logType) {
@@ -474,7 +471,8 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
                 return new FeatureLogCSVFile(dumpPath,getNodesToLog());
             default:
                 return null;
-        }//switch
+        }//switch*/
+        return null;
     }//getFeatureLogger
 
     protected List<Node> getNodesToLog(){

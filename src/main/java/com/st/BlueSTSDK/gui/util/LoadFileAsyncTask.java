@@ -39,7 +39,7 @@ package com.st.BlueSTSDK.gui.util;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.support.annotation.RawRes;
+import androidx.annotation.RawRes;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
