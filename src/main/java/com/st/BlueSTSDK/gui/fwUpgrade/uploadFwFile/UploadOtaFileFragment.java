@@ -36,10 +36,13 @@
  */
 package com.st.BlueSTSDK.gui.fwUpgrade.uploadFwFile;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
@@ -47,22 +50,27 @@ import com.google.android.material.textfield.TextInputLayout;
 import androidx.fragment.app.Fragment;
 import androidx.core.app.NavUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;
+import com.st.BlueSTSDK.Utils.FwVersion;
 import com.st.BlueSTSDK.gui.NodeConnectionService;
 import com.st.BlueSTSDK.gui.R;
+import com.st.BlueSTSDK.gui.fwUpgrade.FirmwareType;
 import com.st.BlueSTSDK.gui.fwUpgrade.FwUpgradeService;
+import com.st.BlueSTSDK.gui.fwUpgrade.FwVersionViewModel;
 import com.st.BlueSTSDK.gui.fwUpgrade.RequestFileUtil;
 import com.st.BlueSTSDK.gui.util.InputChecker.CheckHexNumber;
+import com.st.BlueSTSDK.gui.util.InputChecker.CheckMultipleOf;
 import com.st.BlueSTSDK.gui.util.InputChecker.CheckNumberRange;
 import com.st.BlueSTSDK.gui.util.SimpleFragmentDialog;
-
 
 public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActionReceiver.UploadFinishedListener{
 
@@ -71,6 +79,10 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
     private static final String FW_URI_KEY = UploadOtaFileFragment.class.getCanonicalName()+".FW_URI_KEY";
     private static final String SHOW_ADDRESS_KEY = UploadOtaFileFragment.class.getCanonicalName()+".SHOW_ADDRESS_KEY";
     private static final String ADDRESS_KEY = UploadOtaFileFragment.class.getCanonicalName()+".ADDRESS_KEY";
+
+    private static final String FW_TYPE_KEY = UploadOtaFileFragment.class.getCanonicalName()+".FW_TYPE_KEY";
+    private static final String SHOW_FW_TYPE_KEY = UploadOtaFileFragment.class.getCanonicalName()+".SHOW_FW_TYPE_KEY";
+
     private static final String UPLOAD_PROGRESS_VISIBILITY_KEY = UploadOtaFileFragment.class.getCanonicalName()+".UPLOAD_PROGRESS_VISIBILITY_KEY";
 
     private static final String NODE_PARAM = UploadOtaFileFragment.class.getCanonicalName()+".NODE_PARAM";
@@ -78,7 +90,7 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
     private static final String ADDRESS_PARAM = UploadOtaFileFragment.class.getCanonicalName()+".ADDRESS_PARAM";
 
     private static final int MIN_MEMORY_ADDRESS = 0x7000;
-    private static final int MAX_MEMORY_ADDRESS = 0xFFFF;
+    private static final int MAX_MEMORY_ADDRESS = 0x089000;
 
     public static UploadOtaFileFragment build(@NonNull Node node, @Nullable Uri file,
                                               @Nullable Long address){
@@ -86,7 +98,14 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
     }
 
     public static UploadOtaFileFragment build(@NonNull Node node, @Nullable Uri file,
-                                              @Nullable Long address, boolean showAddressField){
+                                              @Nullable Long address, boolean showAddressField ){
+        return build(node,file,address,showAddressField,null,false);
+    }
+
+    public static UploadOtaFileFragment build(@NonNull Node node, @Nullable Uri file,
+                                              @Nullable Long address, boolean showAddressField,
+                                              @FirmwareType @Nullable Integer fwType,
+                                              boolean showFwType){
         Bundle args = new Bundle();
         args.putString(NODE_PARAM,node.getTag());
         args.putBoolean(SHOW_ADDRESS_KEY,showAddressField);
@@ -95,6 +114,11 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
 
         if(address!=null)
             args.putLong(ADDRESS_PARAM, address);
+
+        args.putBoolean(SHOW_FW_TYPE_KEY,showFwType);
+        if(fwType!=null){
+            args.putInt(FW_TYPE_KEY,fwType);
+        }
 
         UploadOtaFileFragment f = new UploadOtaFileFragment();
         f.setArguments(args);
@@ -114,6 +138,9 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
     private Uri mSelectedFw;
     private TextView mAddressText;
     private View mProgressViewGroup;
+    private RadioGroup mFirmwareTypeView;
+
+    private FwVersionViewModel mVersionViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -134,9 +161,31 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
         if(!showFleshAddress(getArguments())){
             mAddressText.setVisibility(View.GONE);
         }
+
+        setupFwTypeSelector(mRootView.findViewById(R.id.otaUpload_fwTypeSelector),
+                savedInstanceState,getArguments());
+
         mRequestFile = new RequestFileUtil(this,mRootView);
         onFileSelected(getFirmwareLocation(savedInstanceState,getArguments()));
         return  mRootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mVersionViewModel = ViewModelProviders.of(requireActivity()).get(FwVersionViewModel.class);
+    }
+
+    private void setupFwTypeSelector(RadioGroup selector, Bundle savedInstance, Bundle args) {
+        mFirmwareTypeView = selector;
+        if(showFwTypeSelector(args)){
+            mFirmwareTypeView.setVisibility(View.VISIBLE);
+        }else{
+            mFirmwareTypeView.setVisibility(View.GONE);
+        }
+
+        @IdRes int selected = getSelectedFwType(savedInstance,args) == FirmwareType.BLE_FW ? R.id.otaUpload_bleType : R.id.otaUpload_applicationType;
+        mFirmwareTypeView.check(selected);
     }
 
     @Override
@@ -144,6 +193,9 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
         super.onSaveInstanceState(outState);
         if(mAddressText.getText().length()!=0) {
             outState.putString(ADDRESS_KEY,mAddressText.getText().toString());
+        }
+        if(mFirmwareTypeView.getVisibility() == View.VISIBLE){
+            outState.putInt(FW_TYPE_KEY,getSelectedFwType());
         }
         outState.putInt(UPLOAD_PROGRESS_VISIBILITY_KEY,mProgressViewGroup.getVisibility());
         outState.putParcelable(FW_URI_KEY,mSelectedFw);
@@ -179,6 +231,24 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
         }
     }
 
+    private boolean showFwTypeSelector(@Nullable Bundle arguments){
+        if(arguments!=null){
+            return arguments.getBoolean(SHOW_FW_TYPE_KEY,false);
+        }else{
+            return false;
+        }
+    }
+
+    private @FirmwareType int getSelectedFwType(@Nullable Bundle savedInstanceState, @Nullable Bundle arguments){
+        if(savedInstanceState!=null && savedInstanceState.containsKey(FW_TYPE_KEY)){
+                return savedInstanceState.getInt(FW_TYPE_KEY);
+        }
+        if(arguments!=null && arguments.containsKey(FW_TYPE_KEY)){
+            return arguments.getInt(FW_TYPE_KEY);
+        }
+        return FirmwareType.BOARD_FW;
+    }
+
     private @Nullable Uri getFirmwareLocation(@Nullable Bundle savedInstanceState, @Nullable Bundle arguments){
         if(savedInstanceState!=null && savedInstanceState.containsKey(FW_URI_KEY))
             return savedInstanceState.getParcelable(FW_URI_KEY);
@@ -188,9 +258,11 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
     }
 
     private void setupAddressText(TextView addressText, TextInputLayout addressLayout, long initialValue) {
-        addressText.addTextChangedListener(new CheckHexNumber(addressLayout,R.string.otaUpload_invalidHex));
+        addressText.addTextChangedListener(new CheckMultipleOf(addressLayout,R.string.otaUpload_invalidBlockAddress,
+                0x1000));
         addressText.addTextChangedListener(new CheckNumberRange(addressLayout,R.string.otaUpload_invalidMemoryAddress,
                 MIN_MEMORY_ADDRESS, MAX_MEMORY_ADDRESS));
+        addressText.addTextChangedListener(new CheckHexNumber(addressLayout,R.string.otaUpload_invalidHex));
 
         addressText.setText("0x"+Long.toHexString(initialValue));
 
@@ -233,9 +305,11 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
     private void setupStartUploadButton(View button) {
         button.setOnClickListener(v -> {
             Long address = getFwAddress();
+            @FirmwareType int selectedType = getSelectedFwType();
+            FwVersion currentVersion = mVersionViewModel.getFwVersion().getValue();
             if(mSelectedFw!=null) {
                 if(address!=null) {
-                    startUploadFile(mSelectedFw, address);
+                    startUploadFile(mSelectedFw, selectedType,address,currentVersion);
                 }else{
                     Snackbar.make(mRootView,R.string.otaUpload_invalidMemoryAddress,Snackbar.LENGTH_SHORT).show();
                 }
@@ -245,8 +319,16 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
         });
     }
 
-    private void startUploadFile(@NonNull Uri selectedFile,long address) {
-        FwUpgradeService.startUploadService(requireContext(),mNode,selectedFile,address);
+    private @FirmwareType int getSelectedFwType() {
+        if( mFirmwareTypeView.getCheckedRadioButtonId() == R.id.otaUpload_bleType)
+            return FirmwareType.BLE_FW;
+        else
+            return FirmwareType.BOARD_FW;
+    }
+
+    private void startUploadFile(@NonNull Uri selectedFile, @FirmwareType int type,
+                                 long address,@Nullable FwVersion currentVersion) {
+        FwUpgradeService.startUploadService(requireContext(),mNode,selectedFile,type,address,currentVersion);
         mProgressViewGroup.setVisibility(View.VISIBLE);
     }
 
@@ -276,10 +358,10 @@ public class UploadOtaFileFragment extends Fragment implements UploadOtaFileActi
 
     @Override
     public void onUploadFinished(float time_s) {
+        NodeConnectionService.disconnect(requireContext(),mNode);
         SimpleFragmentDialog dialog = SimpleFragmentDialog.newInstance(R.string.otaUpload_completed,
                 getString(R.string.otaUpload_finished,time_s));
         dialog.setOnclickListener((dialog1, which) -> {
-            NodeConnectionService.disconnect(requireContext(),mNode);
             //UploadOtaFileFragment.this
             NavUtils.navigateUpFromSameTask(requireActivity());
         });

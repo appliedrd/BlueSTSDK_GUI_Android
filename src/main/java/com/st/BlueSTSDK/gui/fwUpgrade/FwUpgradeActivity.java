@@ -42,6 +42,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -98,6 +99,7 @@ public class FwUpgradeActivity extends ActivityWithNode {
     }
 
     private Node.NodeStateListener mOnConnected = (node, newState, prevState) -> {
+        Log.d("fwUpgrade","State: "+newState);
         if(newState==Node.State.Connected){
             FwUpgradeActivity.this.mViewModel.loadFwVersionFromNode(node);
         }
@@ -196,8 +198,10 @@ public class FwUpgradeActivity extends ActivityWithNode {
         super.onResume();
 
         if (mNode.isConnected()) {
+            Log.d("fwUpgrade","directly load version");
             mViewModel.loadFwVersionFromNode(mNode);
         } else {
+            Log.d("fwUpgrade","wait connection");
             mNode.addNodeStateListener(mOnConnected);
         }
     }

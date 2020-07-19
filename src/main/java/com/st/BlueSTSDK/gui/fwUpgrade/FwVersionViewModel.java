@@ -36,6 +36,7 @@
  */
 package com.st.BlueSTSDK.gui.fwUpgrade;
 
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -82,11 +83,15 @@ public class FwVersionViewModel extends ViewModel {
     }
 
     public void loadFwVersionFromNode(Node node){
+        Log.d("LoadFwVersion","loadFw");
         if(mFwVersion.getValue()!=null)
             return;
+        Log.d("LoadFwVersion","loadFw2");
         FwVersionConsole console = FwVersionConsole.getFwVersionConsole(node);
         if(console != null){
+            Log.d("LoadFwVersion","console!=null");
             console.setLicenseConsoleListener((console1, type, version) -> {
+                Log.d("LoadFwVersion","read "+version);
                 mIsWaitingFwVersion.postValue(false);
                 mFwUpgradeSupported.postValue(true);
 
