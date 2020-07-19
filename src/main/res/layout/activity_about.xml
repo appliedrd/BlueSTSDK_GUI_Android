@@ -49,7 +49,7 @@
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:layout_weight="1"
-        app:srcCompat="@drawable/about_header" />
+        app:srcCompat="@drawable/ht2_v2" />
     <TextView
         android:id="@+id/about_appName"
         android:layout_width="match_parent"
