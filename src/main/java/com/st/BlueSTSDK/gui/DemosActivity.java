@@ -70,7 +70,6 @@ import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusController;
 import com.st.BlueSTSDK.gui.ConnectionStatusView.ConnectionStatusView;
 import com.st.BlueSTSDK.gui.demos.DemoDescriptionAnnotation;
 import com.st.BlueSTSDK.gui.demos.DemoFragment;
-import com.st.BlueSTSDK.gui.fwUpgrade.FwUpgradeActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -556,12 +555,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
             invalidateOptionsMenu();
             return true;
         }
-        if(id == R.id.menu_start_fw_upgrade){
-            if(mShowDebugConsole)
-                showConsoleOutput(false);
-            startFwUpgradeActivity(this,mNode);
-            return true;
-        }
 
         if(id==android.R.id.home)
             keepConnectionOpen(false,false);
@@ -605,12 +598,6 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     public void startSettingsActivity(Context c,Node n){
         keepConnectionOpen(true,false);
         Intent i = SettingsActivityWithNode.getStartIntent(c,n,true);
-        startActivity(i);
-    }
-
-    protected void startFwUpgradeActivity(Context context, Node node) {
-        keepConnectionOpen(true,false);
-        Intent i = FwUpgradeActivity.getStartIntent(context,node,true);
         startActivity(i);
     }
 
