@@ -1,3 +1,14 @@
-<resources>
-    <string name="title_activity_fw_upgrade_stm32_wb">Firmware Upgrade STM32WB</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="title_activity_fw_upgrade_stm32_wb" tools:ignore="MissingTranslation">Firmware Upgrade STM32WB</string>
+    <string name="prompt_clinic" tools:ignore="MissingTranslation">enter clinic code</string>
+    <string name="prompt_client" tools:ignore="MissingTranslation">enter client code</string>
+    <string name="action_sign_in_short" tools:ignore="MissingTranslation">Sign in</string>
+    <string name="action_credentials" tools:ignore="MissingTranslation">connect Clinic</string>
+    <string name="prompt_email"  tools:ignore="MissingTranslation">Email</string>
+    <string name="prompt_password"  tools:ignore="MissingTranslation">Password</string>
+    <string name="action_sign_in"  tools:ignore="MissingTranslation">Sign in or register</string>
+    <string name="welcome"  tools:ignore="MissingTranslation">"Welcome !"</string>
+    <string name="invalid_clinic"  tools:ignore="MissingTranslation">unknown clinic</string>
+    <string name="invalid_client"  tools:ignore="MissingTranslation">unknown client</string>
+    <string name="login_failed"  tools:ignore="MissingTranslation">"Login failed"</string>
 </resources>
