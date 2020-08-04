@@ -16,7 +16,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/physiobiometrics_v2"
+        android:background="@drawable/physiobiometrics_logo_200px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -85,7 +85,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="24dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/ht2_v2"
+        android:background="@drawable/pb_heel2toe_logo_200px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/set_credentials"/>
