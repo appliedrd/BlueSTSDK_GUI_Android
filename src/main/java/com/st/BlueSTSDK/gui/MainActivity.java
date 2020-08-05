@@ -172,13 +172,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = MainActivity.this;
-        sharedPref = mContext.getSharedPreferences("CLINIC", Context.MODE_PRIVATE);
-        String testClinic = sharedPref.getString("CLINIC","unknown");
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("CLINIC","ABC123");
-        editor.commit();
-
-        testClinic = sharedPref.getString("CLINIC","unknown");
 
         setContentView(R.layout.activity_bluestsdk_gui_main);
         ViewGroup frame = findViewById(R.id.bluestsdk_main_content_view);
@@ -190,6 +183,17 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText clinicEditText = findViewById(R.id.clinic);
         final EditText clientEditText = findViewById(R.id.client);
+
+        sharedPref = mContext.getSharedPreferences("CLINIC", Context.MODE_PRIVATE);
+        String clinicInit = sharedPref.getString("CLINIC","unknown");
+        if (clinicInit != "unknown") {
+            clinicEditText.setText(clinicInit);
+        }
+        String clientInit = sharedPref.getString("CLIENT","unknown");
+        if (clientInit != "unknown") {
+            clientEditText.setText(clientInit);
+        }
+
         final Button loginButton = findViewById(R.id.set_credentials);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 

@@ -59,13 +59,6 @@
             android:name=".SettingsActivityWithNode"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.Settings" />
-        <activity
-            android:name=".fwUpgrade.FwUpgradeActivity"
-            android:label="@string/title_activity_fw_upgrade" />
-
-        <service
-            android:name=".fwUpgrade.FwUpgradeService"
-            android:exported="false" />
         <service
             android:name=".NodeConnectionService"
             android:enabled="true"
@@ -87,16 +80,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.st.BlueSTSDK.gui.thirdPartyLibLicense.LibLicenseActivity" />
         </activity>
-        <activity
-            android:name="com.st.STM32WB.fwUpgrade.FwUpgradeSTM32WBActivity"
-            android:label="@string/title_activity_fw_upgrade_stm32_wb"/>
-
-        <activity android:name="com.st.STM32WB.p2pDemo.DemoSTM32WBActivity"/>
-
-        <service
-            android:name="com.st.BlueSTSDK.gui.fwUpgrade.download.DownloadFwFileService"
-            android:exported="false" />
-
     </application>
 
 </manifest>
