@@ -38,10 +38,10 @@
 
 <resources>
     <string name="NodeConn_disconnect">Disconnect</string>
-    <string name="NodeConn_nodeIsConnected"> WalkWell %s connected</string>
-    <string name="NodeConn_nodeConnectedTitile">WalkWell node still connected</string>
+    <string name="NodeConn_nodeIsConnected"> Heel2Toe %s connected</string>
+    <string name="NodeConn_nodeConnectedTitile">Heel2Toe node still connected</string>
     <string name="NodeConn_multipleNodesConnected">Multiple nodes</string>
 
-    <string name="NodeConn_channelName">WalkWell BLE Status</string>
-    <string name="NodeConn_channelDescription">WalkWell BLE connection status</string>
+    <string name="NodeConn_channelName">Heel2Toe BLE Status</string>
+    <string name="NodeConn_channelDescription">Heel2Toe BLE connection status</string>
 </resources>
