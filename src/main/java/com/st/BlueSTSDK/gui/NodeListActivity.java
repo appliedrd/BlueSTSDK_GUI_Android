@@ -47,6 +47,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import com.st.BlueSTSDK.Manager;
 import com.st.BlueSTSDK.Node;
@@ -75,8 +78,7 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
         }//onDiscoveryChange
 
         /**
-         * update the gui with the new node, and hide the SwipeRefreshLayout refresh after that
-         * we discover the first node
+         * Hide the SwipeRefreshLayout refresh after that we discover the first node
          * @param m manager that discover the node
          * @param node new node discovered
          */
@@ -110,6 +112,16 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
      * button used for start/stop the discovery
      */
     private FloatingActionButton mStartStopButton;
+
+    /**
+     * Animation for start/stop discovery button
+     */
+    private Animation animRotateButton;
+
+    /**
+     * Text view for showing the "hint string" swipeToUpdate
+     */
+    private TextView mTextView;
 
     /**
      * class that manage the node discovery
@@ -160,6 +172,8 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
 
         mSwipeLayout = findViewById(R.id.swiperRefreshDeviceList);
 
+        mTextView = findViewById(R.id.swype_to_update);
+
         //onRefresh
         mSwipeLayout.setOnRefreshListener(() -> {
             resetNodeList();
@@ -172,8 +186,11 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
 
         mSwipeLayout.setSize(SwipeRefreshLayout.DEFAULT);
         mStartStopButton = findViewById(R.id.fab);
-        if(mStartStopButton!=null)
+        if(mStartStopButton!=null) {
             mStartStopButton.setOnClickListener(this);
+        }
+
+        animRotateButton = AnimationUtils.loadAnimation(this,R.anim.fab_rotate);
 
     }
 
@@ -264,6 +281,8 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
         mManager.addListener(mAdapter);
         super.startNodeDiscovery(SCAN_TIME_MS);
         mStartStopButton.setImageResource(R.drawable.ic_close_24dp);
+        mStartStopButton.startAnimation(animRotateButton);
+        mTextView.setVisibility(View.GONE);
         //mManager.addVirtualNode();
     }
 
@@ -276,6 +295,8 @@ public abstract class NodeListActivity extends NodeScanActivity implements NodeR
         mManager.removeListener(mUpdateDiscoverGui);
         mManager.removeListener(mAdapter);
         mStartStopButton.setImageResource(R.drawable.ic_search_24dp);
+        mStartStopButton.startAnimation(animRotateButton);
+        mTextView.setVisibility(View.VISIBLE);
         setRefreshing(mSwipeLayout, false);
     }
 
