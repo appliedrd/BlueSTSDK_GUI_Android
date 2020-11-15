@@ -1,3 +1,6 @@
+# Original version for Heel2Toe REVB
+branch is master_REVB
+
 # BlueSTSDK Gui
 
 This library is built on top of the [BlueSTSDK](https://github.com/STMicroelectronicswq/BlueSTSDK_Android) library.
