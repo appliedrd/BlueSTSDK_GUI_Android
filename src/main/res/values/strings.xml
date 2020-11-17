@@ -1,3 +1,14 @@
 <resources>
     <string name="title_activity_fw_upgrade_stm32_wb">Firmware Upgrade STM32WB</string>
+    <string name="prompt_clinic">enter clinic code</string>
+    <string name="prompt_client" >enter client code</string>
+    <string name="action_sign_in_short" >Sign in</string>
+    <string name="action_credentials" >connect Clinic</string>
+    <string name="prompt_email" >Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in" >Sign in or register</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_clinic" >unknown clinic</string>
+    <string name="invalid_client">unknown client</string>
+    <string name="login_failed">"Login failed"</string>
 </resources>
