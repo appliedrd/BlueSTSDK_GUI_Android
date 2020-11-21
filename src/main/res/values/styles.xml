@@ -44,7 +44,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorSecondary">@color/colorAccent</item>
-        <item name="colorOnSecondary">@color/colorOnAccent</item>
+<!--        <item name="colorOnSecondary">@color/colorOnAccent</item>-->
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">
@@ -65,7 +65,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorSecondary">@color/colorAccent</item>
-        <item name="colorOnSecondary">@color/colorOnAccent</item>
+<!--        <item name="colorOnSecondary">@color/colorOnAccent</item>-->
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>

@@ -62,6 +62,9 @@
         <activity
             android:name=".fwUpgrade.FwUpgradeActivity"
             android:label="@string/title_activity_fw_upgrade" />
+        <activity
+            android:name="com.st.BlueMS.physiobiometrics.OfflineTestActivity"
+            android:label="OfflineTestActivity" />
 
         <service
             android:name=".fwUpgrade.FwUpgradeService"

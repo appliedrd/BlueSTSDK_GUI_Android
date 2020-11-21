@@ -69,4 +69,14 @@
         app:layout_constraintBottom_toTopOf="@+id/bluestsdk_main_versionText"
         android:layout_marginEnd="@dimen/activity_vertical_margin"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/offlineTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="140dp"
+        android:text="Offline Test"
+        app:layout_constraintBottom_toTopOf="@+id/bluestsdk_main_copyrightText"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

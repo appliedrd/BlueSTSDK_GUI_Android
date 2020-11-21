@@ -400,15 +400,16 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.acitivity_demos, menu);
+        //getMenuInflater().inflate(R.menu.acitivity_demos, menu);
 
-        if (mShowDebugConsole) {
+       /* if (mShowDebugConsole) {
             menu.findItem(R.id.showDebugConsole).setTitle(R.string.hideDebugConsole);
         } else {
             menu.findItem(R.id.showDebugConsole).setTitle(R.string.showDebugConsole);
-        }//if-else
+        }*///if-else
 
         //hide debug stuff if not available
+/*
         if(mNode!=null) {
             Debug debug = mNode.getDebug();
             if (debug == null) {
@@ -421,7 +422,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
                 menu.findItem(R.id.menu_start_fw_upgrade).setVisible(false);
             }
         }
-
+*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -472,7 +473,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
      */
     @Override
     protected Feature.FeatureLoggerListener getLogger() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+/*        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String logType = sharedPref.getString(LogPreferenceFragment.KEY_PREF_LOG_STORE, "LogCat");
         String dumpPath = getLogDirectory();
         switch (logType) {
@@ -484,7 +485,8 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
                 return new FeatureLogCSVFile(dumpPath,getNodesToLog());
             default:
                 return null;
-        }//switch
+        }//switch*/
+        return null;
     }//getFeatureLogger
 
     protected List<Node> getNodesToLog(){

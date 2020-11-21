@@ -36,7 +36,9 @@
  */
 package com.st.BlueSTSDK.gui;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -45,17 +47,33 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.st.physiobiometrics.login.LoggedInUserView;
+import com.st.physiobiometrics.login.LoginFormState;
+import com.st.physiobiometrics.login.LoginResult;
+import com.st.physiobiometrics.login.LoginViewModel;
+import com.st.physiobiometrics.login.LoginViewModelFactory;
 
 import java.net.URL;
 
@@ -79,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String PRIVACY_DIALOG_SHOWN = MainActivity.class.getCanonicalName()+".PRIVACY_DIALOG_SHOWN";
     private static final String PRIVACY_DIALOG_SHOWN_TAG = MainActivity.class.getCanonicalName()+".PRIVACY_DIALOG_SHOWN";
 
+    private static Context mContext;
+    SharedPreferences sharedPref;
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -87,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
     private final Handler mHideHandler = new Handler();
 
     private View mControlsView;
+
+    private LoginViewModel loginViewModel;
+
     private final Runnable mShowContentRunnable = new Runnable() {
         @Override
         public void run() {
@@ -138,17 +161,104 @@ public class MainActivity extends AppCompatActivity {
 
         content.findViewById(R.id.bluestsdk_main_aboutButton).setOnClickListener(this::startAboutActivity);
         content.findViewById(R.id.bluestsdk_main_searchButton).setOnClickListener(this::startScanBleActivity);
+        content.findViewById(R.id.offlineTest).setOnClickListener(this::startOfflineActivity);
         return content;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = MainActivity.this;
 
         setContentView(R.layout.activity_bluestsdk_gui_main);
         ViewGroup frame = findViewById(R.id.bluestsdk_main_content_view);
 
         mControlsView = buildContentView(frame);
+
+        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
+                .get(LoginViewModel.class);
+
+        final EditText clinicEditText = findViewById(R.id.clinic);
+        final EditText clientEditText = findViewById(R.id.client);
+
+        sharedPref = mContext.getSharedPreferences("CLINIC", Context.MODE_PRIVATE);
+        String clinicInit = sharedPref.getString("CLINIC","unknown");
+        if (clinicInit != "unknown") {
+            clinicEditText.setText(clinicInit);
+        }
+        String clientInit = sharedPref.getString("CLIENT","unknown");
+        if (clientInit != "unknown") {
+            clientEditText.setText(clientInit);
+        }
+
+        final Button loginButton = findViewById(R.id.set_credentials);
+        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
+            @Override
+            public void onChanged(@Nullable LoginFormState loginFormState) {
+                if (loginFormState == null) {
+                    return;
+                }
+                loginButton.setEnabled(loginFormState.isDataValid());
+                if (loginFormState.getclinicError() != null) {
+                    clinicEditText.setError(getString(loginFormState.getclinicError()));
+                }
+                if (loginFormState.getclientError() != null) {
+                    clientEditText.setError(getString(loginFormState.getclientError()));
+                }
+            }
+        });
+
+        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
+            @Override
+            public void onChanged(@Nullable LoginResult loginResult) {
+                if (loginResult == null) {
+                    return;
+                }
+                loadingProgressBar.setVisibility(View.GONE);
+                if (loginResult.getError() != null) {
+                    showLoginFailed(loginResult.getError());
+                }
+                if (loginResult.getSuccess() != null) {
+                    updateUiWithUser(loginResult.getSuccess());
+                }
+                setResult(Activity.RESULT_OK);
+
+                //Complete and destroy login activity once successful
+                //finish();
+            }
+        });
+
+        TextWatcher afterTextChangedListener = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // ignore
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // ignore
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                loginViewModel.loginDataChanged(clinicEditText.getText().toString(),
+                        clinicEditText.getText().toString());
+            }
+        };
+        clinicEditText.addTextChangedListener(afterTextChangedListener);
+        clientEditText.addTextChangedListener(afterTextChangedListener);
+
+        loginButton.setOnClickListener(v -> {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            Log.d("Login", "loginButton.setOnClickListener");
+            String clinic = clinicEditText.getText().toString();
+            String client = clientEditText.getText().toString();
+            loginViewModel.login(mContext, clinic, client);
+            //loginViewModel.login(clinicEditText.getText().toString(), clientEditText.getText().toString());
+        });
+
     }
 
     @Override
@@ -208,6 +318,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view view pressed
      */
     public void startAboutActivity(View view){}
+
+    public void startOfflineActivity(View view) {}
 
     /**
      * tell witch file is containing the privacy policy, the file content will be shown in the dialog
@@ -283,5 +395,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateUiWithUser(LoggedInUserView model) {
+        String welcome = getString(R.string.welcome) + model.getDisplayName();
+        // TODO : initiate successful logged in experience
+        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+    }
 
+    private void showLoginFailed(Integer errorString) {
+        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
 }
