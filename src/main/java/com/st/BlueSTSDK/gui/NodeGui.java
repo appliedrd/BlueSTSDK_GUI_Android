@@ -58,10 +58,10 @@ public class NodeGui {
             case STEVAL_BCN002V1:
                 return R.drawable.board_bluenrg;
             case NUCLEO:
-                return R.drawable.board_nucleo;
+                return R.drawable.physiobiometrics_logo_300px;
             case GENERIC:
             default:
-                return R.drawable.board_generic;
+                return R.drawable.physiobiometrics_logo_300px;
         }
     }
 
