@@ -10,3 +10,5 @@ gradle.properties
 gradlew
 gradlew.bat
 local.properties
+google-services.json
+

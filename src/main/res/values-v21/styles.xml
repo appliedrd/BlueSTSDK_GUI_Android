@@ -46,6 +46,6 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@drawable/splash_screen_image</item>
+        <item name="android:windowBackground">@drawable/physiobiometrics</item>
     </style>
 </resources>
