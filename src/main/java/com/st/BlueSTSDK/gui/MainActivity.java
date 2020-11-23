@@ -159,8 +159,10 @@ public class MainActivity extends AppCompatActivity {
             appText.setText(appName);
         }
 
-        content.findViewById(R.id.bluestsdk_main_aboutButton).setOnClickListener(this::startAboutActivity);
-        content.findViewById(R.id.bluestsdk_main_searchButton).setOnClickListener(this::startScanBleActivity);
+        content.findViewById(R.id.about).setOnClickListener(this::startAboutActivity);
+        content.findViewById(R.id.about2).setOnClickListener(this::startAboutActivity);
+        content.findViewById(R.id.connect).setOnClickListener(this::startScanBleActivity);
+        content.findViewById(R.id.connect2).setOnClickListener(this::startScanBleActivity);
         content.findViewById(R.id.offlineTest).setOnClickListener(this::startOfflineActivity);
         return content;
     }
