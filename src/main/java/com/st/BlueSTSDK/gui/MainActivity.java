@@ -69,6 +69,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.st.physiobiometrics.firebase.FireBaseLoginActivity;
+import com.st.physiobiometrics.firebase.FirebaseSignupActivity;
 import com.st.physiobiometrics.login.LoggedInUserView;
 import com.st.physiobiometrics.login.LoginFormState;
 import com.st.physiobiometrics.login.LoginResult;
@@ -82,6 +86,7 @@ import java.net.URL;
  * scanning
  */
 public class MainActivity extends AppCompatActivity {
+    private FirebaseAuth mAuth;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -171,64 +176,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = MainActivity.this;
+        mAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_bluestsdk_gui_main);
         ViewGroup frame = findViewById(R.id.bluestsdk_main_content_view);
 
         mControlsView = buildContentView(frame);
 
-        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
+        final Button logoutButton = findViewById(R.id.LogOutbutton);
+        //final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        final EditText clinicEditText = findViewById(R.id.clinic);
-        final EditText clientEditText = findViewById(R.id.client);
-
-        sharedPref = mContext.getSharedPreferences("CLINIC", Context.MODE_PRIVATE);
-        String clinicInit = sharedPref.getString("CLINIC","unknown");
-        if (clinicInit != "unknown") {
-            clinicEditText.setText(clinicInit);
-        }
-        String clientInit = sharedPref.getString("CLIENT","unknown");
-        if (clientInit != "unknown") {
-            clientEditText.setText(clientInit);
-        }
-
-        final Button loginButton = findViewById(R.id.set_credentials);
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-
-        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(@Nullable LoginFormState loginFormState) {
-                if (loginFormState == null) {
-                    return;
-                }
-                loginButton.setEnabled(loginFormState.isDataValid());
-                if (loginFormState.getclinicError() != null) {
-                    clinicEditText.setError(getString(loginFormState.getclinicError()));
-                }
-                if (loginFormState.getclientError() != null) {
-                    clientEditText.setError(getString(loginFormState.getclientError()));
-                }
-            }
-        });
-
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                //finish();
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intToMain=new Intent(MainActivity.this, FireBaseLoginActivity.class);
+                startActivity(intToMain);
             }
         });
 
@@ -245,22 +208,23 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(clinicEditText.getText().toString(),
-                        clinicEditText.getText().toString());
             }
         };
-        clinicEditText.addTextChangedListener(afterTextChangedListener);
-        clientEditText.addTextChangedListener(afterTextChangedListener);
-
-        loginButton.setOnClickListener(v -> {
-            loadingProgressBar.setVisibility(View.VISIBLE);
-            Log.d("Login", "loginButton.setOnClickListener");
-            String clinic = clinicEditText.getText().toString();
-            String client = clientEditText.getText().toString();
-            loginViewModel.login(mContext, clinic, client);
-            //loginViewModel.login(clinicEditText.getText().toString(), clientEditText.getText().toString());
-        });
-
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            Toast.makeText(MainActivity.this,"You must login or signup",
+                    Toast.LENGTH_SHORT).show();
+            Intent i=new Intent(MainActivity.this, FireBaseLoginActivity.class);
+            startActivity(i);
+        }
+        else{
+            Toast.makeText(MainActivity.this,"You are logged in",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

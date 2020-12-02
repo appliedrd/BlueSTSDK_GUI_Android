@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bluestsdk_main_content_controls"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    android:visibility="visible"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:visibility="visible">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/about2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/physiobiometrics_logo_200px"
@@ -35,88 +35,36 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/about2" />
-    <EditText
-        android:id="@+id/clinic"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/prompt_clinic"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/about" />
-
-    <EditText
-        android:id="@+id/client"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/prompt_client"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionDone"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clinic" />
-
-    <Button
-        android:id="@+id/set_credentials"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="2dp"
-        android:enabled="false"
-        android:text="@string/action_credentials"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/client"
-        app:layout_constraintVertical_bias="0.2" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/connect2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/pb_heel2toe_logo_200px"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/set_credentials"/>
+        app:layout_constraintTop_toBottomOf="@+id/about" />
 
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="64dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/client"
-        app:layout_constraintStart_toStartOf="@+id/client"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
 
     <TextView
         android:id="@+id/connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
         android:text="Connect Heel2Toe step sensor (BluNRG)"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/colorPrimaryDark"
         android:textColorHighlight="@color/colorGrey"
         android:textSize="20sp"
-        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connect2" />
 
     <Button
@@ -139,27 +87,40 @@
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="14dp"
-        app:layout_constraintTop_toBottomOf="@+id/offlineTest" />
+        app:layout_constraintTop_toBottomOf="@+id/offlineTest"
+        tools:layout_editor_absoluteX="8dp" />
 
     <TextView
         android:id="@+id/bluestsdk_main_copyrightText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:text="@string/copyright"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
         app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/bluestsdk_main_appNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/bluestsdk_main_copyrightText"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/LogOutbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        android:text="LogOut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/h2tstatus" />
 </androidx.constraintlayout.widget.ConstraintLayout>

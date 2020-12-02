@@ -63,8 +63,17 @@
             android:name=".fwUpgrade.FwUpgradeActivity"
             android:label="@string/title_activity_fw_upgrade" />
         <activity
+            android:name="com.st.BlueSTSDK.gui.MainActivity"
+            android:label="Main" />
+        <activity
             android:name="com.st.BlueMS.physiobiometrics.OfflineTestActivity"
-            android:label="OfflineTestActivity" />
+            android:label="Offline Test" />
+        <activity
+            android:name="com.st.physiobiometrics.firebase.FireBaseLoginActivity"
+            android:label="Clinic Login" />
+        <activity
+            android:name="com.st.physiobiometrics.firebase.FirebaseSignupActivity"
+            android:label="Clinic Signup" />
 
         <service
             android:name=".fwUpgrade.FwUpgradeService"
@@ -73,6 +82,7 @@
             android:name=".NodeConnectionService"
             android:enabled="true"
             android:exported="false" />
+
         <activity
             android:name=".thirdPartyLibLicense.LibLicenseActivity"
             android:label="License"
@@ -92,9 +102,9 @@
         </activity>
         <activity
             android:name="com.st.STM32WB.fwUpgrade.FwUpgradeSTM32WBActivity"
-            android:label="@string/title_activity_fw_upgrade_stm32_wb"/>
+            android:label="@string/title_activity_fw_upgrade_stm32_wb" />
 
-        <activity android:name="com.st.STM32WB.p2pDemo.DemoSTM32WBActivity"/>
+        <activity android:name="com.st.STM32WB.p2pDemo.DemoSTM32WBActivity" />
 
         <service
             android:name="com.st.BlueSTSDK.gui.fwUpgrade.download.DownloadFwFileService"
