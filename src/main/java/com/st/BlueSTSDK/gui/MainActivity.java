@@ -163,12 +163,6 @@ public class MainActivity extends AppCompatActivity {
         if(appText!=null && appName!=null){
             appText.setText(appName);
         }
-
-        content.findViewById(R.id.about).setOnClickListener(this::startAboutActivity);
-        content.findViewById(R.id.about2).setOnClickListener(this::startAboutActivity);
-        content.findViewById(R.id.connect).setOnClickListener(this::startScanBleActivity);
-        content.findViewById(R.id.connect2).setOnClickListener(this::startScanBleActivity);
-        content.findViewById(R.id.offlineTest).setOnClickListener(this::startOfflineActivity);
         return content;
     }
 
@@ -183,14 +177,35 @@ public class MainActivity extends AppCompatActivity {
 
         mControlsView = buildContentView(frame);
 
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                "com.appliedrd.heel2toe", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("Clinic", "testClinic");
+        editor.apply();
+
         final Button logoutButton = findViewById(R.id.LogOutbutton);
         //final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        final TextView about = findViewById(R.id.about);
+        about.setOnClickListener(this::startAboutActivity);
+
+        final TextView about2 = findViewById(R.id.about2);
+        about2.setOnClickListener(this::startAboutActivity);
+
+        final TextView connect = findViewById(R.id.connect);
+        connect.setOnClickListener(this::startScanBleActivity);
+
+        final Button connect2 = findViewById(R.id.connect2);
+        connect2.setOnClickListener(this::startScanBleActivity);
+
+        final Button  offlineTest = findViewById(R.id.offlineTest);
+        offlineTest.setOnClickListener(this::startOfflineActivity);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                Intent intToMain=new Intent(MainActivity.this, FireBaseLoginActivity.class);
+                Intent intToMain=new Intent(getBaseContext(), FireBaseLoginActivity.class);
                 startActivity(intToMain);
             }
         });
@@ -277,15 +292,17 @@ public class MainActivity extends AppCompatActivity {
      * function called when the start ble scan button is pressed
      * @param view view pressed
      */
-    public void startScanBleActivity(View view){}
+    protected void startScanBleActivity(View view){
+        System.out.println("main startScanBleActivity ");
+    }
 
-    /**
-     * function called when the about button is pressed
-     * @param view view pressed
-     */
-    public void startAboutActivity(View view){}
+    protected void startAboutActivity(View view){
+        System.out.println("main startAboutActivity ");
+    }
 
-    public void startOfflineActivity(View view) {}
+    protected void startOfflineActivity(View view) {
+        System.out.println("main startOfflineActivity ");
+    }
 
     /**
      * tell witch file is containing the privacy policy, the file content will be shown in the dialog

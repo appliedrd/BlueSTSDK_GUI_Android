@@ -78,7 +78,8 @@ public class FireBaseLoginActivity extends AppCompatActivity {
 
                             }
                             else{
-                                Intent inToHome=new Intent(FireBaseLoginActivity.this,MainActivity.class);
+                                Intent inToHome=new Intent(FireBaseLoginActivity.this, MainActivity.class);
+                                inToHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(inToHome);
                             }
                         }

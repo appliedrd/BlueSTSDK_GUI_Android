@@ -62,7 +62,7 @@ public class FirebaseSignupActivity extends AppCompatActivity {
 
                             }
                             else{
-                                startActivity(new Intent(FirebaseSignupActivity.this,FireBaseLoginActivity.class));
+                                startActivity(new Intent(getBaseContext(),FireBaseLoginActivity.class));
                             }
                         }
                     });
@@ -78,7 +78,7 @@ public class FirebaseSignupActivity extends AppCompatActivity {
         tvSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(FirebaseSignupActivity.this,FireBaseLoginActivity.class);
+                Intent i=new Intent(getBaseContext(),FireBaseLoginActivity.class);
                 startActivity(i);
             }
         });
