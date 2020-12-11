@@ -69,16 +69,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.st.physiobiometrics.firebase.FireBaseLoginActivity;
-import com.st.physiobiometrics.firebase.FirebaseSignupActivity;
-import com.st.physiobiometrics.login.LoggedInUserView;
-import com.st.physiobiometrics.login.LoginFormState;
-import com.st.physiobiometrics.login.LoginResult;
-import com.st.physiobiometrics.login.LoginViewModel;
-import com.st.physiobiometrics.login.LoginViewModelFactory;
-
 import java.net.URL;
 
 /**
@@ -86,7 +76,6 @@ import java.net.URL;
  * scanning
  */
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -103,17 +92,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String PRIVACY_DIALOG_SHOWN_TAG = MainActivity.class.getCanonicalName()+".PRIVACY_DIALOG_SHOWN";
 
     private static Context mContext;
-    SharedPreferences sharedPref;
+    //SharedPreferences sharedPref;
 
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
-    private final Handler mHideHandler = new Handler();
-
     private View mControlsView;
-
-    private LoginViewModel loginViewModel;
 
     private final Runnable mShowContentRunnable = new Runnable() {
         @Override
@@ -169,68 +154,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = MainActivity.this;
-        mAuth = FirebaseAuth.getInstance();
-
-        setContentView(R.layout.activity_bluestsdk_gui_main);
-        ViewGroup frame = findViewById(R.id.bluestsdk_main_content_view);
-
-        mControlsView = buildContentView(frame);
-
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                "com.appliedrd.heel2toe", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("Clinic", "testClinic");
-        editor.apply();
-
-        final Button logoutButton = findViewById(R.id.LogOutbutton);
-        //final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-
-        final TextView about = findViewById(R.id.about);
-        about.setOnClickListener(this::startAboutActivity);
-
-        final TextView about2 = findViewById(R.id.about2);
-        about2.setOnClickListener(this::startAboutActivity);
-
-        final TextView connect = findViewById(R.id.connect);
-        connect.setOnClickListener(this::startScanBleActivity);
-
-        final Button connect2 = findViewById(R.id.connect2);
-        connect2.setOnClickListener(this::startScanBleActivity);
-
-        final Button  offlineTest = findViewById(R.id.offlineTest);
-        offlineTest.setOnClickListener(this::startOfflineActivity);
-
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intToMain=new Intent(getBaseContext(), FireBaseLoginActivity.class);
-                startActivity(intToMain);
-            }
-        });
-
-        TextWatcher afterTextChangedListener = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        };
     }
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+       /* FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
             Toast.makeText(MainActivity.this,"You must login or signup",
                     Toast.LENGTH_SHORT).show();
@@ -239,27 +168,12 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             Toast.makeText(MainActivity.this,"You are logged in",Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        boolean splashWasShown=false;
-        if(savedInstanceState!=null){
-            splashWasShown = savedInstanceState.getBoolean(SPLASH_SCREEN_WAS_SHOWN,false);
-        }//if
-
-        // Trigger the initial showSplashScreen() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        if(!splashWasShown) {
-            showSplashScreen();
-            delayedShowContent(AUTO_HIDE_DELAY_MILLIS);
-        }else{
-            mControlsView.setVisibility(View.VISIBLE);
-        }
     }
 
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -267,26 +181,9 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putBoolean(SPLASH_SCREEN_WAS_SHOWN, true);
     }
 
-    private void showSplashScreen() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowContentRunnable);
-    }
 
-    /**
-     * Schedules a call to showContent() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedShowContent(int delayMillis) {
-        mHideHandler.removeCallbacks(mShowContentRunnable);
-        mHideHandler.postDelayed(mShowContentRunnable, delayMillis);
-    }
+
 
     /**
      * function called when the start ble scan button is pressed
@@ -376,15 +273,5 @@ public class MainActivity extends AppCompatActivity {
             return dialogBuilder.create();
 
         }
-    }
-
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-    }
-
-    private void showLoginFailed(Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }
