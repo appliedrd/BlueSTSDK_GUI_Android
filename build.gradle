@@ -37,7 +37,6 @@
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -88,8 +87,6 @@ dependencies {
     implementation group: 'androidx.lifecycle', name: 'lifecycle-extensions', version: "$rootProject.androidx_lifecycleExtVersion"
     implementation group: 'androidx.localbroadcastmanager', name: 'localbroadcastmanager', version: "$rootProject.androidx_localBroadcastVersion"
     implementation group: 'androidx.swiperefreshlayout', name: 'swiperefreshlayout', version: '1.1.0'
-    implementation 'com.google.firebase:firebase-storage:19.2.0'
-    implementation 'com.google.firebase:firebase-auth:20.0.1'
 
 
     testImplementation "junit:junit:$rootProject.junitVersion"

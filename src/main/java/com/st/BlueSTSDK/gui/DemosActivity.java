@@ -179,7 +179,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     private DrawerLayout mDrawerLayout;
 
     //button for show the demo menu
-    private ActionBarDrawerToggle mDrawerToggle;
+    //private ActionBarDrawerToggle mDrawerToggle;
 
     //demo menu
     private NavigationView mNavigationTab;
@@ -254,7 +254,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
         mPager = findViewById(R.id.pager);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.showDemoList, R
+        /*mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.showDemoList, R
                 .string.closeDemoList);
 
         // Set the drawer toggle as the DrawerListener
@@ -264,7 +264,7 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         if (needShowHelpView()) {
             mHelpView.setOnClickListener(view -> view.setVisibility(View.GONE));
             mHelpView.setVisibility(View.VISIBLE);
-        }//if
+        }//if*/
 
         //Log.d(TAG, "onCreate Activity" + mNodeContainer);
 
@@ -274,13 +274,13 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+        //mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        //mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -316,12 +316,12 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
         mNavigationTab.setNavigationItemSelectedListener(this);
 
         //if only a demo is available hide the left menu
-        if(adapter.getCount()==1){
+/*        if(adapter.getCount()==1){
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             mDrawerToggle.setDrawerIndicatorEnabled(false);
             mDrawerToggle.syncState();
             mHelpView.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override
@@ -550,9 +550,9 @@ public abstract class DemosActivity extends LogFeatureActivity implements NodeCo
 
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+/*        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
-        }
+        }*/
 
         if (id == R.id.settings) {
             startSettingsActivity(this, mNode);

@@ -112,7 +112,8 @@ public class NodeRecyclerViewAdapter extends RecyclerView.Adapter<NodeRecyclerVi
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final Node n = mValues.get(position);
         holder.mItem = n;
-        holder.mNodeNameLabel.setText(n.getName());
+        //holder.mNodeNameLabel.setText(n.getName());
+        holder.mNodeNameLabel.setText("Heel2Toe");
         holder.mNodeTagLabel.setText(n.getTag());
 
         @DrawableRes int boardImageRes = NodeGui.getBoardTypeImage(n.getType());

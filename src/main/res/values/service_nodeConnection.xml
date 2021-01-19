@@ -38,13 +38,13 @@
 
 <resources>
     <string name="NodeConn_disconnect">Disconnect</string>
-    <string name="NodeConn_nodeIsConnected"> %s connected</string>
-    <string name="NodeConn_nodeConnectedTitile">BlueST node still connected</string>
-    <string name="NodeConn_multipleNodesConnected">Multiple nodes</string>
+    <string name="NodeConn_nodeIsConnected"> Heel2Toe connected</string>
+    <string name="NodeConn_nodeConnectedTitile">Heel2Toe is still connected</string>
+    <string name="NodeConn_multipleNodesConnected">Multiple Heel2Toe nodes</string>
 
-    <string name="NodeConn_nodeDisconnectionTitile">BlueST node disconnecting</string>
-    <string name="NodeConn_nodeDisconnectionDesc">Close BLE connection</string>
+    <string name="NodeConn_nodeDisconnectionTitile">Heel2Toe disconnecting</string>
+    <string name="NodeConn_nodeDisconnectionDesc">Close Heel2Toe connection</string>
 
-    <string name="NodeConn_channelName">BLE Status</string>
-    <string name="NodeConn_channelDescription">BLE connection status</string>
+    <string name="NodeConn_channelName">Heel2Toe Status</string>
+    <string name="NodeConn_channelDescription">Heel2Toe connection status</string>
 </resources>
