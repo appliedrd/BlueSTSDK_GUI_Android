@@ -50,7 +50,8 @@ public class NodeGui {
                 return R.drawable.board_steval_wesu1;
             case SENSOR_TILE:
             case SENSOR_TILE_BOX:
-                return R.drawable.board_sensor_tile;
+                //return R.drawable.board_sensor_tile;
+                return R.drawable.icon;
             case BLUE_COIN:
                 return R.drawable.board_bluecoin;
             case STEVAL_IDB008VX:
@@ -58,10 +59,11 @@ public class NodeGui {
             case STEVAL_BCN002V1:
                 return R.drawable.board_bluenrg;
             case NUCLEO:
-                return R.drawable.physiobiometrics_logo_300px;
+                //return R.drawable.physiobiometrics_logo_300px;
+                return R.drawable.icon;
             case GENERIC:
             default:
-                return R.drawable.physiobiometrics_logo_300px;
+                return R.drawable.icon;
         }
     }
 

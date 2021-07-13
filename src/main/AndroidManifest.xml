@@ -65,16 +65,6 @@
         <activity
             android:name="com.st.BlueSTSDK.gui.MainActivity"
             android:label="Main" />
-        <activity
-            android:name="com.st.BlueMS.physiobiometrics.OfflineTestActivity"
-            android:label="Offline Test" />
-        <activity
-            android:name="com.st.physiobiometrics.firebase.FireBaseLoginActivity"
-            android:label="Clinic Login" />
-        <activity
-            android:name="com.st.physiobiometrics.firebase.FirebaseSignupActivity"
-            android:label="Clinic Signup" />
-
         <service
             android:name=".fwUpgrade.FwUpgradeService"
             android:exported="false" />

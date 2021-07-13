@@ -8,88 +8,147 @@
     android:background="@android:color/background_light"
     android:visibility="visible">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/about2"
+    <Button
+        android:id="@+id/imageViewPB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/physiobiometrics_logo_200px"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:drawableTop="@drawable/physiobiometrics_logo_200px"
+        android:drawablePadding="0dp"
+        android:text="About Us"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="About us"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/colorPrimaryDark"
-        android:textColorHighlight="@color/colorGrey"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/about2" />
+    <LinearLayout
+        android:id="@+id/clinic"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="40dp"
+        android:padding="4dp"
+        android:weightSum="0.9"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPB">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/connect2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/pb_heel2toe_logo_200px"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/about" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight=".3"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="Clinic:"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25dp" />
 
+        <TextView
+            android:id="@+id/clinicname"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:textSize="25dp"
+            android:layout_weight=".60"
+            android:gravity="left"
+            android:textColor="@color/colorPrimary"
+            android:hint="Clinic name"
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            />
+    </LinearLayout>
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/therapist"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        android:weightSum="0.9"
+        app:layout_constraintTop_toBottomOf="@+id/clinic">
+
+        <TextView
+            android:id="@+id/therapistlabel"
+            android:layout_width="101dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight=".25"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="Therapist:"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/therapistname"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="2dp"
+            android:layout_weight=".60"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="left"
+            android:hint="Therapist name"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25dp" />
+    </LinearLayout>
+
+    <Button
         android:id="@+id/connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="50dp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="50dp"
+        android:background="@color/swipeColor_1"
+        android:drawableTop="@drawable/pb_heel2toe_logo_200px"
+        android:drawablePadding="0dp"
         android:gravity="center_horizontal"
-        android:text="Connect Heel2Toe step sensor (BluNRG)"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/colorPrimaryDark"
-        android:textColorHighlight="@color/colorGrey"
+        android:insetLeft="10dp"
+        android:insetRight="10dp"
+        android:text="Connect Heel2Toe step sensor"
+        android:textColor="@color/colorPrimary"
         android:textSize="20sp"
+        app:backgroundTint="@color/swipeColor_1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connect2" />
+        app:layout_constraintTop_toBottomOf="@+id/therapist" />
+
+    <Button
+        android:id="@+id/LogOutbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        app:backgroundTint="@android:color/holo_red_dark"
+        android:text="LogOut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connect" />
 
     <Button
         android:id="@+id/offlineTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="Offline File Test"
+        app:backgroundTint="@android:color/background_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connect" />
-
-    <TextView
-        android:id="@+id/h2tstatus"
-        android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:layout_margin="8dp"
-        android:background="@color/colorPrimary"
-        android:text="connection status"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="14dp"
-        app:layout_constraintTop_toBottomOf="@+id/offlineTest"
-        tools:layout_editor_absoluteX="8dp" />
-
+        app:layout_constraintTop_toBottomOf="@+id/LogOutbutton" />
     <TextView
         android:id="@+id/bluestsdk_main_copyrightText"
         android:layout_width="wrap_content"
@@ -112,15 +171,5 @@
         app:layout_constraintBottom_toTopOf="@+id/bluestsdk_main_copyrightText"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <Button
-        android:id="@+id/LogOutbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
-        android:text="LogOut"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/h2tstatus" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

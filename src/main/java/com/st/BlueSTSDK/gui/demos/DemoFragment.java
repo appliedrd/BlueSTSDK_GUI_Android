@@ -88,11 +88,11 @@ public abstract class DemoFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context activity) {
         super.onAttach(activity);
-        try {
-            DemosActivity temp = (DemosActivity) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must extend DemosActivity");
-        }//try
+//        try {
+//            DemosActivity temp = (DemosActivity) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString() + " must extend DemosActivity");
+//        }//try
     }//onAttach
 
 
